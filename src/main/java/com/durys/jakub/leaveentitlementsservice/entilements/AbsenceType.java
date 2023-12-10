@@ -1,3 +1,3 @@
 package com.durys.jakub.leaveentitlementsservice.entilements;
 
-record Absence(String name) { }
+record AbsenceType(String name) { }
