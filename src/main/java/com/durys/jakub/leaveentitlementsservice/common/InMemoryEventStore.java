@@ -2,9 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.common;
 
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -28,7 +26,14 @@ class InMemoryEventStore implements EventStore {
     }
 
     @Override
-    public List<Event> loadEvents(UUID aggregateId) {
-        return null;
+    public <T extends AggregateRoot> List<Event> loadEvents(UUID aggregateId, Class<T> type) {
+
+        AggregateRoot aggregateRoot = DB.get(aggregateId);
+
+        if (Objects.isNull(aggregateRoot)) {
+            return Collections.emptyList();
+        }
+
+        return aggregateRoot.events;
     }
 }

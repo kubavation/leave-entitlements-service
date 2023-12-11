@@ -7,5 +7,5 @@ public interface EventStore {
     <T extends AggregateRoot> T load(UUID aggregateId);
     <T extends AggregateRoot> void save(T aggregate);
     void save(List<Event> events);
-    List<Event> loadEvents(UUID aggregateId);
+    <T extends AggregateRoot> List<Event> loadEvents(UUID aggregateId, Class<T> type);
 }
