@@ -2,6 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class AggregateRoot {
@@ -15,4 +16,16 @@ public abstract class AggregateRoot {
         this.id = id;
         this.type = type.getName();
     }
+
+    public abstract void handle(Event event);
+
+
+    protected void validate(Event event) {
+
+        if (Objects.isNull(event) || Objects.equals(event.aggregateId(), id)) {
+            throw new RuntimeException("Invalid event");
+        }
+
+    }
+
 }
