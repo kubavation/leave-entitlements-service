@@ -19,6 +19,24 @@ public abstract class AggregateRoot {
 
     public abstract void handle(Event event);
 
+    public void load(List<Event> events) {
+        events.forEach(this::raise);
+    }
+
+    public void raise(Event event) {
+
+        validate(event);
+        event.setType(type);
+
+        handle(event);
+        version++;
+    }
+
+    public void apply(Event event) {
+        raise(event);
+        events.add(event);
+    }
+
 
     protected void validate(Event event) {
 
