@@ -40,7 +40,7 @@ public abstract class AggregateRoot {
 
     protected void validate(Event event) {
 
-        if (Objects.isNull(event) || Objects.equals(event.aggregateId(), id)) {
+        if (Objects.isNull(event) || Objects.equals(event.getAggregateId(), id)) {
             throw new RuntimeException("Invalid event");
         }
 
