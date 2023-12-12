@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AggregateRoot<T> {
+public abstract class AggregateRoot {
 
-    protected final T id;
+    protected final Object id;
     protected String type;
     protected Long version;
     protected final List<Event> events = new ArrayList<>();
 
-    public AggregateRoot(T id, String type) {
+    public AggregateRoot(Object id, String type) {
         this.id = id;
         this.type = type;
     }
