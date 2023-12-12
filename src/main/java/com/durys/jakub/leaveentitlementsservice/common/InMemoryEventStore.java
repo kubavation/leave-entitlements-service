@@ -30,8 +30,12 @@ class InMemoryEventStore implements EventStore {
     }
 
     @Override
-    public void save(List<Event> events) {
+    public void saveEvents(UUID aggregateId, List<Event> events) {
 
+        List<Event> loadedEvents = DB.get(aggregateId);
+        loadedEvents.addAll(events);
+
+        DB.put(aggregateId, loadedEvents);
     }
 
     @Override
