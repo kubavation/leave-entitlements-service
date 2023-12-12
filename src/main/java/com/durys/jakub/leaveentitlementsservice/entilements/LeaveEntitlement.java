@@ -5,7 +5,7 @@ import com.durys.jakub.leaveentitlementsservice.common.Event;
 
 import java.util.UUID;
 
-public class LeaveEntitlement extends AggregateRoot<LeaveEntitlement.Id> {
+public class LeaveEntitlement extends AggregateRoot {
 
     private static final String TYPE = "LeaveEntitlement";
 
