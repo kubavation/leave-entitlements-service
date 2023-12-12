@@ -1,4 +1,4 @@
-package com.durys.jakub.leaveentitlementsservice.common;
+package com.durys.jakub.leaveentitlementsservice.es;
 
 import lombok.Data;
 

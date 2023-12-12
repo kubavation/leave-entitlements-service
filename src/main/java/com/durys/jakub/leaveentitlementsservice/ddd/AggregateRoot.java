@@ -1,9 +1,13 @@
-package com.durys.jakub.leaveentitlementsservice.common;
+package com.durys.jakub.leaveentitlementsservice.ddd;
+
+import com.durys.jakub.leaveentitlementsservice.es.Event;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public abstract class AggregateRoot {
 
     protected final Object id;

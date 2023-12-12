@@ -1,5 +1,6 @@
-package com.durys.jakub.leaveentitlementsservice.common;
+package com.durys.jakub.leaveentitlementsservice.es;
 
+import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,7 +29,7 @@ class InMemoryEventStore implements EventStore {
     @Override
     public <T extends AggregateRoot> void save(T aggregate) {
 
-        saveEvents(aggregate.id, aggregate.events);
+        saveEvents(aggregate.getId(), aggregate.getEvents());
         //todo
     }
 

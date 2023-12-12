@@ -1,7 +1,7 @@
 package com.durys.jakub.leaveentitlementsservice.entilements;
 
-import com.durys.jakub.leaveentitlementsservice.common.AggregateRoot;
-import com.durys.jakub.leaveentitlementsservice.common.Event;
+import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
+import com.durys.jakub.leaveentitlementsservice.es.Event;
 
 import java.util.UUID;
 

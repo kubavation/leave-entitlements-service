@@ -1,4 +1,6 @@
-package com.durys.jakub.leaveentitlementsservice.common;
+package com.durys.jakub.leaveentitlementsservice.es;
+
+import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 
 import java.util.List;
 
