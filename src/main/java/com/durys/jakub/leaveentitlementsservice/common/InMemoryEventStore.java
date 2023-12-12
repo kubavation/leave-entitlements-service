@@ -2,6 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.common;
 
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,9 +11,18 @@ class InMemoryEventStore implements EventStore {
 
     private static final Map<UUID, AggregateRoot> DB = new ConcurrentHashMap<>();
 
+
     @Override
-    public <T extends AggregateRoot> T load(UUID aggregateId) {
-        return null;
+    public <T extends AggregateRoot> T load(UUID aggregateId, Class<T> type) {
+
+        var aggregate = getAggregate(aggregateId, type);
+
+        List<Event> events = loadEvents(aggregateId, type);
+
+        events
+            .forEach(aggregate::raise);
+
+        return aggregate;
     }
 
     @Override
@@ -35,5 +45,14 @@ class InMemoryEventStore implements EventStore {
         }
 
         return aggregateRoot.events;
+    }
+
+
+    private <T extends AggregateRoot> T getAggregate(UUID aggregateId, Class<T> type) {
+        try {
+            return type.getConstructor(UUID.class, String.class).newInstance(aggregateId, type.getName());
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot construct aggregate ID: %s TYPE: %s".formatted(aggregateId.toString(), type.getName()));
+        }
     }
 }
