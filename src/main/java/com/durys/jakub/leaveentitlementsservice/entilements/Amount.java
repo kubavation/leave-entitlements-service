@@ -1,4 +1,4 @@
 package com.durys.jakub.leaveentitlementsservice.entilements;
 
-class EntitlementDetail {
+record Amount(Integer days) {
 }

@@ -3,13 +3,12 @@ package com.durys.jakub.leaveentitlementsservice.entilements;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
 
+import java.util.Set;
 import java.util.UUID;
 
-public class LeaveEntitlement extends AggregateRoot {
+public class LeaveEntitlements extends AggregateRoot {
 
     private static final String TYPE = "LeaveEntitlement";
-
-
 
     public record Id(AbsenceType absenceType, TenantId tenantId) {
 
@@ -19,11 +18,18 @@ public class LeaveEntitlement extends AggregateRoot {
 
     }
 
-    private final Id id;
+    public enum State {
+        Active, Archived
+    }
 
-    LeaveEntitlement(Id id) {
-        super(id, TYPE);
-        this.id = id;
+
+    private final Id identifier;
+    private State state;
+    private Set<EntitlementDetails> details;
+
+    LeaveEntitlements(Id identifier) {
+        super(identifier, TYPE);
+        this.identifier = identifier;
     }
 
     @Override

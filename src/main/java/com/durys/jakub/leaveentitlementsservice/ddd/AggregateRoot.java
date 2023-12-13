@@ -15,7 +15,7 @@ public abstract class AggregateRoot {
     protected Long version;
     protected final List<Event> events = new ArrayList<>();
 
-    public AggregateRoot(Object id, String type) {
+    protected AggregateRoot(Object id, String type) {
         this.id = id;
         this.type = type;
     }
