@@ -4,8 +4,10 @@ import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -38,7 +40,9 @@ class InMemoryEventStore implements EventStore {
     @Override
     public void saveEvents(Object aggregateId, List<Event> events) {
 
-        List<Event> loadedEvents = DB.get(aggregateId);
+        List<Event> loadedEvents = Optional.ofNullable(DB.get(aggregateId))
+                .orElse(new ArrayList<>());
+
         loadedEvents.addAll(events);
 
         DB.put(aggregateId, loadedEvents);
@@ -57,5 +61,9 @@ class InMemoryEventStore implements EventStore {
             log.error("getAggregate error", e);
             throw new RuntimeException("Cannot construct aggregate ID: %s TYPE: %s".formatted(aggregateId.toString(), type.getName()));
         }
+    }
+
+    public Map<Object, List<Event>> db() {
+        return DB;
     }
 }

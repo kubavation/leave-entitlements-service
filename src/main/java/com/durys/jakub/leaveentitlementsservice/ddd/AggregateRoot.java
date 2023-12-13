@@ -3,7 +3,6 @@ package com.durys.jakub.leaveentitlementsservice.ddd;
 import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public abstract class AggregateRoot {
         event.setAggregateType(type);
 
         handle(event);
-        version++;
+        incrementVersion();
     }
 
     public void apply(Event event) {
@@ -54,6 +53,10 @@ public abstract class AggregateRoot {
 
     protected Event createEvent(Class<? extends DomainEvent> eventClass, byte[] data) {
         return new Event(id, eventClass.getSimpleName(), data);
+    }
+
+    protected void incrementVersion() {
+        version++;
     }
 
 }
