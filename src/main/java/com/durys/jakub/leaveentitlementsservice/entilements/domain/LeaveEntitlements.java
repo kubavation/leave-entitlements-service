@@ -1,6 +1,5 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
-import com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsInitialized;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
@@ -59,7 +58,7 @@ public class LeaveEntitlements extends AggregateRoot {
 
     public static class Factory {
 
-        public LeaveEntitlements create(String absence, UUID tenantId) {
+        public static LeaveEntitlements create(String absence, UUID tenantId) {
             return new LeaveEntitlements(new Id(absence, tenantId));
         }
     }
