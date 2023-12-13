@@ -1,6 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain.events;
 
-import java.util.UUID;
+import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlements;
 
-record LeaveEntitlementsInitialized(String absence, UUID tenantId) {
-}
+public record LeaveEntitlementsInitialized(LeaveEntitlements.Id identifier) implements DomainEvent {}

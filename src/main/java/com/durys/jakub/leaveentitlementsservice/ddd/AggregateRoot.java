@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.ddd;
 
+import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
 import lombok.Getter;
 
@@ -47,6 +48,10 @@ public abstract class AggregateRoot {
             throw new RuntimeException("Invalid event");
         }
 
+    }
+
+    protected Event createEvent(Class<? extends DomainEvent> eventClass, byte[] data) {
+        return new Event(id, eventClass.getSimpleName(), data);
     }
 
 }

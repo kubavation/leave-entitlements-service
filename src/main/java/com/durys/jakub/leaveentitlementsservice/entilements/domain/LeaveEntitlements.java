@@ -1,10 +1,15 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsInitialized;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer.serialize;
 
 public class LeaveEntitlements extends AggregateRoot {
 
@@ -28,9 +33,18 @@ public class LeaveEntitlements extends AggregateRoot {
     private State state;
     private Set<EntitlementDetails> details;
 
+
     LeaveEntitlements(Id identifier) {
         super(identifier, TYPE);
         this.identifier = identifier;
+        this.state = State.Active;
+        this.details = new HashSet<>();
+
+        var leaveEntitlementsInitialized = new LeaveEntitlementsInitialized(identifier);
+
+        apply(
+            createEvent(LeaveEntitlementsInitialized.class, serialize(leaveEntitlementsInitialized))
+        );
     }
 
     @Override
@@ -40,6 +54,14 @@ public class LeaveEntitlements extends AggregateRoot {
 
     public Id id() {
         return identifier;
+    }
+
+
+    public static class Factory {
+
+        public LeaveEntitlements create(String absence, UUID tenantId) {
+            return new LeaveEntitlements(new Id(absence, tenantId));
+        }
     }
 
 }
