@@ -8,12 +8,13 @@ import java.util.UUID;
 @Data
 public final class Event {
     private final UUID id;
-    private final UUID aggregateId;
+    private final Object aggregateId;
     private String type;
+    private String aggregateType;
     private final Instant at;
     private final byte[] data;
 
-    public Event(UUID id, UUID aggregateId, String type, Instant at, byte[] data) {
+    public Event(UUID id, Object aggregateId, String type, Instant at, byte[] data) {
         this.id = id;
         this.aggregateId = aggregateId;
         this.type = type;
@@ -21,8 +22,12 @@ public final class Event {
         this.data = data;
     }
 
-    public Event(UUID id, UUID aggregateId, String type, byte[] data) {
+    public Event(UUID id, Object aggregateId, String type, byte[] data) {
         this(id, aggregateId, type, Instant.now(), data);
+    }
+
+    public Event(Object aggregateId, String type, byte[] data) {
+        this(UUID.randomUUID(), aggregateId, type, Instant.now(), data);
     }
 
 

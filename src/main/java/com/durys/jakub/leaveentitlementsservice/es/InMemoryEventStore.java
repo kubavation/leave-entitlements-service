@@ -1,6 +1,7 @@
 package com.durys.jakub.leaveentitlementsservice.es;
 
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Slf4j
 class InMemoryEventStore implements EventStore {
 
     private static final Map<Object, List<Event>> DB = new ConcurrentHashMap<>();
@@ -48,10 +50,11 @@ class InMemoryEventStore implements EventStore {
     }
 
 
-    private <T extends AggregateRoot> T getAggregate(Object aggregateId, Class<T> type) {
+    <T extends AggregateRoot> T getAggregate(Object aggregateId, Class<T> type) {
         try {
-            return type.getConstructor(Object.class, String.class).newInstance(aggregateId, type.getName());
+            return type.getConstructor(aggregateId.getClass()).newInstance(aggregateId);
         } catch (Exception e) {
+            log.error("getAggregate error", e);
             throw new RuntimeException("Cannot construct aggregate ID: %s TYPE: %s".formatted(aggregateId.toString(), type.getName()));
         }
     }
