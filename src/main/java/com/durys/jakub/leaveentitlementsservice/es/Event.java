@@ -10,6 +10,7 @@ public final class Event {
     private final UUID id;
     private final Object aggregateId;
     private String type;
+    private String aggregateType;
     private final Instant at;
     private final byte[] data;
 

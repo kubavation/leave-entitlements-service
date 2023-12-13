@@ -32,7 +32,7 @@ public abstract class AggregateRoot {
     public void raise(Event event) {
 
         validate(event);
-        event.setType(type);
+        event.setAggregateType(type);
 
         handle(event);
         version++;
