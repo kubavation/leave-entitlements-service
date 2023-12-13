@@ -1,4 +1,4 @@
-package com.durys.jakub.leaveentitlementsservice.entilements;
+package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
