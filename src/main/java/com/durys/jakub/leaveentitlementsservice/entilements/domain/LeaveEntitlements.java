@@ -33,7 +33,7 @@ public class LeaveEntitlements extends AggregateRoot {
     private Set<EntitlementDetails> details;
 
 
-    LeaveEntitlements(Id identifier) {
+    public LeaveEntitlements(Id identifier) {
         super(identifier, TYPE);
         this.identifier = identifier;
         this.state = State.Active;
