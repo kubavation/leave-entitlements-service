@@ -10,6 +10,7 @@ public class LeaveEntitlements extends AggregateRoot {
 
     private static final String TYPE = "LeaveEntitlement";
 
+
     public record Id(AbsenceType absenceType, TenantId tenantId) {
 
         public Id(String absenceType, UUID tenantId) {
@@ -35,6 +36,10 @@ public class LeaveEntitlements extends AggregateRoot {
     @Override
     public void handle(Event event) {
 
+    }
+
+    public Id id() {
+        return identifier;
     }
 
 }
