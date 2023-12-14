@@ -93,6 +93,7 @@ public class LeaveEntitlements extends AggregateRoot {
         public static LeaveEntitlements create(String absence, UUID tenantId) {
             return new LeaveEntitlements(new Id(absence, tenantId));
         }
+
     }
 
 }
