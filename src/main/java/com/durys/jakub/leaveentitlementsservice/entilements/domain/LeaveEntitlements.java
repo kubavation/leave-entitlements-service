@@ -1,15 +1,19 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsGranted;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsInitialized;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer.serialize;
 
+@Slf4j
 public class LeaveEntitlements extends AggregateRoot {
 
     private static final String TYPE = "LeaveEntitlement";
@@ -30,7 +34,7 @@ public class LeaveEntitlements extends AggregateRoot {
 
     private final Id identifier;
     private State state;
-    private Set<EntitlementDetails> details;
+    private Set<Entitlement> details;
 
 
     public LeaveEntitlements(Id identifier) {
@@ -48,11 +52,22 @@ public class LeaveEntitlements extends AggregateRoot {
 
     @Override
     public void handle(Event event) {
-
+        log.info("handling event {}", event);
     }
 
     public Id id() {
         return identifier;
+    }
+
+    public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
+
+        //todo validation
+
+        var leaveEntitlementsGranted = new LeaveEntitlementsGranted(from, to, days);
+
+        apply(
+            createEvent(LeaveEntitlementsGranted.class, serialize(leaveEntitlementsGranted))
+        );
     }
 
 
