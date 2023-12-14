@@ -56,15 +56,12 @@ public class LeaveEntitlements extends AggregateRoot {
         log.info("handling event {}", event);
         switch (event.getType()) {
             case "LeaveEntitlementsInitialized" -> handle(deserialize(event.getData(), LeaveEntitlementsInitialized.class));
+            case "LeaveEntitlementsGranted" -> handle(deserialize(event.getData(), LeaveEntitlementsGranted.class));
+            default -> log.warn("Not supported event");
         }
     }
 
-    public Id id() {
-        return identifier;
-    }
-
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
-
         //todo validation
 
         var leaveEntitlementsGranted = new LeaveEntitlementsGranted(from, to, days);
@@ -78,6 +75,16 @@ public class LeaveEntitlements extends AggregateRoot {
         this.identifier = event.identifier();
         this.state = State.Active;
         this.details = new HashSet<>();
+    }
+
+    private void handle(LeaveEntitlementsGranted event) {
+        Entitlement entitlement = new Entitlement(event.from(), event.to(), event.days());
+        details.add(entitlement);
+    }
+
+
+    public Id id() {
+        return identifier;
     }
 
 
