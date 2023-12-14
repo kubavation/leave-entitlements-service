@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer.serialize;
+import static com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer.deserialize;
 
 @Slf4j
 public class LeaveEntitlements extends AggregateRoot {
@@ -32,7 +33,7 @@ public class LeaveEntitlements extends AggregateRoot {
     }
 
 
-    private final Id identifier;
+    private Id identifier;
     private State state;
     private Set<Entitlement> details;
 
@@ -53,6 +54,9 @@ public class LeaveEntitlements extends AggregateRoot {
     @Override
     public void handle(Event event) {
         log.info("handling event {}", event);
+        switch (event.getType()) {
+            case "LeaveEntitlementsInitialized" -> handle(deserialize(event.getData(), LeaveEntitlementsInitialized.class));
+        }
     }
 
     public Id id() {
@@ -68,6 +72,12 @@ public class LeaveEntitlements extends AggregateRoot {
         apply(
             createEvent(LeaveEntitlementsGranted.class, serialize(leaveEntitlementsGranted))
         );
+    }
+
+    private void handle(LeaveEntitlementsInitialized event) {
+        this.identifier = event.identifier();
+        this.state = State.Active;
+        this.details = new HashSet<>();
     }
 
 
