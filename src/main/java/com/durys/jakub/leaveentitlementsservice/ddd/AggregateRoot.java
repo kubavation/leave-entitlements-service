@@ -14,7 +14,7 @@ public abstract class AggregateRoot {
     protected final Object id;
     protected String type;
     protected Long version;
-    protected final List<Event> events = new ArrayList<>();
+    protected final List<DomainEvent> events = new ArrayList<>();
 
     protected AggregateRoot(Object id, String type) {
         this.id = id;
@@ -22,30 +22,24 @@ public abstract class AggregateRoot {
         this.version = 0L;
     }
 
-    public abstract void handle(Event event);
+    public abstract void handle(DomainEvent event);
 
-    public void load(List<Event> events) {
-        events.forEach(this::raise);
-    }
-
-    public void raise(Event event) {
+    public void raise(DomainEvent event) {
 
         validate(event);
-        event.setAggregateType(type);
-
         handle(event);
         incrementVersion();
     }
 
-    public void apply(Event event) {
+    public void apply(DomainEvent event) {
         raise(event);
         events.add(event);
     }
 
 
-    protected void validate(Event event) {
+    protected void validate(DomainEvent event) {
 
-        if (Objects.isNull(event) || !Objects.equals(event.getAggregateId(), id)) {
+        if (Objects.isNull(event)) {//|| !Objects.equals(event.getAggregateId(), id)) {
             throw new RuntimeException("Invalid event");
         }
 
