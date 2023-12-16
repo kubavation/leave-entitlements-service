@@ -1,18 +1,15 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsGranted;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsInitialized;
-import com.durys.jakub.leaveentitlementsservice.es.Event;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer.serialize;
-import static com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer.deserialize;
 
 @Slf4j
 public class LeaveEntitlements extends AggregateRoot {
@@ -44,32 +41,29 @@ public class LeaveEntitlements extends AggregateRoot {
         this.state = State.Active;
         this.details = new HashSet<>();
 
-        var leaveEntitlementsInitialized = new LeaveEntitlementsInitialized(identifier);
-
-        apply(
-            createEvent(LeaveEntitlementsInitialized.class, serialize(leaveEntitlementsInitialized))
-        );
+        apply(new LeaveEntitlementsInitialized(identifier));
     }
 
     @Override
-    public void handle(Event event) {
+    public void handle(DomainEvent event) {
         log.info("handling event {}", event);
-        switch (event.getType()) {
-            case "LeaveEntitlementsInitialized" -> handle(deserialize(event.getData(), LeaveEntitlementsInitialized.class));
-            case "LeaveEntitlementsGranted" -> handle(deserialize(event.getData(), LeaveEntitlementsGranted.class));
-            default -> log.warn("Not supported event");
-        }
+//        switch (event) {
+//            case LeaveEntitlementsGranted event -> handle((LeaveEntitlementsInitialized) event);
+//            case LeaveEntitlementsGranted.class -> handle((LeaveEntitlementsGranted) event);
+//            default -> log.warn("Not supported event");
+//        }
     }
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
         //todo validation
 
-        var leaveEntitlementsGranted = new LeaveEntitlementsGranted(from, to, days);
-
-        apply(
-            createEvent(LeaveEntitlementsGranted.class, serialize(leaveEntitlementsGranted))
-        );
+        apply(new LeaveEntitlementsGranted(from, to, days));
     }
+
+    public void appendAbsence(LocalDate from, LocalDate to) {
+
+    }
+
 
     private void handle(LeaveEntitlementsInitialized event) {
         this.identifier = event.identifier();
