@@ -19,7 +19,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private static final String TYPE = "LeaveEntitlement";
 
-
     public record Id(AbsenceType absenceType, TenantId tenantId) {
 
         public Id(String absenceType, UUID tenantId) {
@@ -40,16 +39,14 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     public LeaveEntitlements(Id identifier) {
         super(identifier, TYPE);
-        this.identifier = identifier;
-        this.state = State.Active;
-        this.details = new HashSet<>();
-
         apply(new LeaveEntitlementsInitialized(identifier));
     }
 
     @Override
     public void handle(LeaveEntitlementsEvent event) {
+
         log.info("handling event {}", event);
+
         switch (event) {
             case LeaveEntitlementsGranted granted -> handle(granted);
             case LeaveEntitlementsInitialized initialized -> handle(initialized);
