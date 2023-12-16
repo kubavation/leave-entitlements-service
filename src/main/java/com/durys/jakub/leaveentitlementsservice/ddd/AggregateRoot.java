@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-public abstract class AggregateRoot {
+public abstract class AggregateRoot<T extends DomainEvent> {
 
     protected final Object id;
     protected String type;
     protected Long version;
-    protected final List<DomainEvent> events = new ArrayList<>();
+    protected final List<T> events = new ArrayList<>();
 
     protected AggregateRoot(Object id, String type) {
         this.id = id;
@@ -22,22 +22,22 @@ public abstract class AggregateRoot {
         this.version = 0L;
     }
 
-    public abstract void handle(DomainEvent event);
+    public abstract void handle(T event);
 
-    public void raise(DomainEvent event) {
+    public void raise(T event) {
 
         validate(event);
         handle(event);
         incrementVersion();
     }
 
-    public void apply(DomainEvent event) {
+    public void apply(T event) {
         raise(event);
         events.add(event);
     }
 
 
-    protected void validate(DomainEvent event) {
+    protected void validate(T event) {
 
         if (Objects.isNull(event)) {//|| !Objects.equals(event.getAggregateId(), id)) {
             throw new RuntimeException("Invalid event");
