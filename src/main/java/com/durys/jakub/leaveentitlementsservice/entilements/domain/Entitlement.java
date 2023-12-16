@@ -21,4 +21,18 @@ class Entitlement {
         this.amount = new Amount(days);
         this.absences = new ArrayList<>();
     }
+
+    void addAbsence(Absence absence) {
+
+        if (containsAbsenceAt(absence.getAt())) {
+            throw new RuntimeException("Absence already exists at %s".formatted(absence.getAt()));
+        }
+
+        absences.add(absence);
+    }
+
+
+    boolean containsAbsenceAt(LocalDate at) {
+        return absences.stream().anyMatch(absence -> absence.getAt().equals(at));
+    }
 }
