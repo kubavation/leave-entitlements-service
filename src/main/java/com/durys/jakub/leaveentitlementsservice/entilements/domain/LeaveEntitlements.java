@@ -2,8 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
-import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsGranted;
-import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsInitialized;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
-public class LeaveEntitlements extends AggregateRoot {
+public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private static final String TYPE = "LeaveEntitlement";
 
@@ -41,23 +40,23 @@ public class LeaveEntitlements extends AggregateRoot {
         this.state = State.Active;
         this.details = new HashSet<>();
 
-        apply(new LeaveEntitlementsInitialized(identifier));
+        apply(new LeaveEntitlementsEvent.LeaveEntitlementsInitialized(identifier));
     }
 
     @Override
-    public void handle(DomainEvent event) {
+    public void handle(LeaveEntitlementsEvent event) {
         log.info("handling event {}", event);
-//        switch (event) {
-//            case LeaveEntitlementsGranted event -> handle((LeaveEntitlementsInitialized) event);
-//            case LeaveEntitlementsGranted.class -> handle((LeaveEntitlementsGranted) event);
-//            default -> log.warn("Not supported event");
-//        }
+        switch (event) {
+            case LeaveEntitlementsEvent.LeaveEntitlementsGranted granted -> handle(granted);
+            case LeaveEntitlementsEvent.LeaveEntitlementsInitialized initialized -> handle(initialized);
+            default -> log.warn("Not supported event");
+        }
     }
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
         //todo validation
 
-        apply(new LeaveEntitlementsGranted(from, to, days));
+        apply(new LeaveEntitlementsEvent.LeaveEntitlementsGranted(from, to, days));
     }
 
     public void appendAbsence(LocalDate from, LocalDate to) {
@@ -65,13 +64,13 @@ public class LeaveEntitlements extends AggregateRoot {
     }
 
 
-    private void handle(LeaveEntitlementsInitialized event) {
+    private void handle(LeaveEntitlementsEvent.LeaveEntitlementsInitialized event) {
         this.identifier = event.identifier();
         this.state = State.Active;
         this.details = new HashSet<>();
     }
 
-    private void handle(LeaveEntitlementsGranted event) {
+    private void handle(LeaveEntitlementsEvent.LeaveEntitlementsGranted event) {
         Entitlement entitlement = new Entitlement(event.from(), event.to(), event.days());
         details.add(entitlement);
     }
