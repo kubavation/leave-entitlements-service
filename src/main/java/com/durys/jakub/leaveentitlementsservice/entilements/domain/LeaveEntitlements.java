@@ -1,9 +1,11 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
-import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
+import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -34,7 +36,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private Id identifier;
     private State state;
-    private Set<Entitlement> details;
+    private Set<Entitlement> entitlements;
 
 
     public LeaveEntitlements(Id identifier) {
@@ -60,20 +62,21 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         apply(new LeaveEntitlementsGranted(from, to, days));
     }
 
-    public void appendAbsence(LocalDate from, LocalDate to) {
+    public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
 
+        apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
     }
 
 
     private void handle(LeaveEntitlementsInitialized event) {
         this.identifier = event.identifier();
         this.state = State.Active;
-        this.details = new HashSet<>();
+        this.entitlements = new HashSet<>();
     }
 
     private void handle(LeaveEntitlementsGranted event) {
         Entitlement entitlement = new Entitlement(event.from(), event.to(), event.days());
-        details.add(entitlement);
+        entitlements.add(entitlement);
     }
 
 
@@ -81,7 +84,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return identifier;
     }
 
+    private Entitlement findEntitlement(LocalDate date) {
+        return entitlements.stream()
+            .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Cannot find entitlements for date %s".formatted(date)));
+    }
 
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Factory {
 
         public static LeaveEntitlements create(String absence, UUID tenantId) {
