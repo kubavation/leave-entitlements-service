@@ -23,12 +23,19 @@ class Entitlement {
     }
 
     void addAbsence(Absence absence) {
-
+    
         if (containsAbsenceAt(absence.getAt())) {
             throw new RuntimeException("Absence already exists at %s".formatted(absence.getAt()));
         }
 
         absences.add(absence);
+    }
+
+    void withdrawAbsence(LocalDate from, LocalDate to) {
+
+        absences.removeIf(absence ->
+                        !absence.getAt().isBefore(from) && !absence.getAt().isAfter(to));
+
     }
 
 
