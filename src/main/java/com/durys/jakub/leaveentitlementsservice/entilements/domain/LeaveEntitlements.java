@@ -1,6 +1,5 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
-import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
@@ -34,7 +33,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private Id identifier;
     private State state;
-    private Set<Entitlement> details;
+    private Set<Entitlement> entitlements;
 
 
     public LeaveEntitlements(Id identifier) {
@@ -68,12 +67,12 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     private void handle(LeaveEntitlementsInitialized event) {
         this.identifier = event.identifier();
         this.state = State.Active;
-        this.details = new HashSet<>();
+        this.entitlements = new HashSet<>();
     }
 
     private void handle(LeaveEntitlementsGranted event) {
         Entitlement entitlement = new Entitlement(event.from(), event.to(), event.days());
-        details.add(entitlement);
+        entitlements.add(entitlement);
     }
 
 

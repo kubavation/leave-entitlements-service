@@ -23,7 +23,7 @@ class Entitlement {
     }
 
     void addAbsence(Absence absence) {
-    
+
         if (containsAbsenceAt(absence.getAt())) {
             throw new RuntimeException("Absence already exists at %s".formatted(absence.getAt()));
         }
