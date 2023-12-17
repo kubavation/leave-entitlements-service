@@ -3,6 +3,7 @@ package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
+import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -59,8 +60,9 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         apply(new LeaveEntitlementsGranted(from, to, days));
     }
 
-    public void appendAbsence(LocalDate from, LocalDate to) {
+    public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
 
+        apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
     }
 
 
