@@ -4,6 +4,8 @@ import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -82,7 +84,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return identifier;
     }
 
+    private Entitlement findEntitlement(LocalDate date) {
+        return entitlements.stream()
+            .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Cannot find entitlements for date %s".formatted(date)));
+    }
 
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Factory {
 
         public static LeaveEntitlements create(String absence, UUID tenantId) {

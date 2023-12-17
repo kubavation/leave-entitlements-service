@@ -1,9 +1,13 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter(AccessLevel.PACKAGE)
 class Entitlement {
 
     private final Period period;
