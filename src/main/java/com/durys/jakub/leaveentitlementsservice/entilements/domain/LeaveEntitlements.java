@@ -76,6 +76,8 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             throw new DomainValidationException("Entitlements not registered");
         }
 
+        //todo days validation
+
         apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
     }
 
@@ -133,7 +135,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
 
-    boolean containsEntitlements(LocalDate from, LocalDate to) {
+    private boolean containsEntitlements(LocalDate from, LocalDate to) {
         return entitlements.stream()
                 .map(Entitlement::getPeriod)
                 .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
