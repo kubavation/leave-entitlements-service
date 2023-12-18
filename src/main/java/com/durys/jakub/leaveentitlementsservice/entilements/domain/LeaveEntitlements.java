@@ -87,6 +87,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private void handle(AbsenceAppended event) {
 
+        UUID absenceId = UUID.randomUUID();
+
+        Stream.iterate(event.from(), date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(event.from(), event.to()) + 1)
+                .forEach(date -> {
+                    Entitlement entitlement = findEntitlement(date)
+                            .orElseThrow(RuntimeException::new);
+                    entitlement.addAbsence(new Absence(absenceId, date));
+                });
     }
 
 
