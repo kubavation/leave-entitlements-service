@@ -55,6 +55,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             case LeaveEntitlementsGranted granted -> handle(granted);
             case LeaveEntitlementsInitialized initialized -> handle(initialized);
             case AbsenceAppended absenceAppended -> handle(absenceAppended);
+            case AbsenceWithdrawed absenceWithdrawed -> handle(absenceWithdrawed);
             default -> log.warn("Not supported event");
         }
     }
@@ -71,6 +72,11 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         }
 
         apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
+    }
+
+    public void withdrawAbsence(LocalDate from, LocalDate to) {
+
+        apply(new AbsenceWithdrawed(from, to));
     }
 
 
@@ -96,6 +102,10 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
                             .orElseThrow(RuntimeException::new);
                     entitlement.addAbsence(new Absence(absenceId, date));
                 });
+    }
+
+    private void handle(AbsenceWithdrawed event) {
+        //todo
     }
 
 
