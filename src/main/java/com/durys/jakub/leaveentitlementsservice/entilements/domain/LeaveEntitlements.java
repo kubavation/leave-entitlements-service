@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent.*;
 
@@ -57,12 +58,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
-        //todo validation
 
         apply(new LeaveEntitlementsGranted(from, to, days));
     }
 
     public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
+
+        if (entitlementsNotRegistered(from, to)) {
+            throw new RuntimeException("Entitlements not registered");
+        }
 
         apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
     }
@@ -84,11 +88,18 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return identifier;
     }
 
-    private Entitlement findEntitlement(LocalDate date) {
+    private Optional<Entitlement> findEntitlement(LocalDate date) {
         return entitlements.stream()
             .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Cannot find entitlements for date %s".formatted(date)));
+            .findFirst();
+    }
+
+
+    private boolean entitlementsNotRegistered(LocalDate from, LocalDate to) {
+        return Stream.iterate(from, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(from, to) + 1)
+                .map(this::findEntitlement)
+                .anyMatch(Optional::isEmpty);
     }
 
 
