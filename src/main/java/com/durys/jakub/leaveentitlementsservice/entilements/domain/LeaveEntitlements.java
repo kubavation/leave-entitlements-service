@@ -1,7 +1,7 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
-
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
 import lombok.AccessLevel;
@@ -9,9 +9,12 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent.*;
 
@@ -52,19 +55,35 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         switch (event) {
             case LeaveEntitlementsGranted granted -> handle(granted);
             case LeaveEntitlementsInitialized initialized -> handle(initialized);
+            case AbsenceAppended absenceAppended -> handle(absenceAppended);
+            case AbsenceWithdrawed absenceWithdrawed -> handle(absenceWithdrawed);
             default -> log.warn("Not supported event");
         }
     }
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
-        //todo validation
+
+        if (containsEntitlements(from, to)) {
+            throw new DomainValidationException("Entitlements already exists in period");
+        }
 
         apply(new LeaveEntitlementsGranted(from, to, days));
     }
 
     public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
 
+        if (entitlementsNotRegistered(from, to)) {
+            throw new DomainValidationException("Entitlements not registered");
+        }
+
+        //todo days validation
+
         apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
+    }
+
+    public void withdrawAbsence(LocalDate from, LocalDate to) {
+
+        apply(new AbsenceWithdrawed(from, to));
     }
 
 
@@ -79,16 +98,47 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         entitlements.add(entitlement);
     }
 
+    private void handle(AbsenceAppended event) {
+
+        UUID absenceId = UUID.randomUUID();
+
+        Stream.iterate(event.from(), date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(event.from(), event.to()) + 1)
+                .forEach(date -> {
+                    Entitlement entitlement = findEntitlement(date)
+                            .orElseThrow(RuntimeException::new);
+                    entitlement.addAbsence(new Absence(absenceId, date));
+                });
+    }
+
+    private void handle(AbsenceWithdrawed event) {
+        //todo
+    }
+
 
     public Id id() {
         return identifier;
     }
 
-    private Entitlement findEntitlement(LocalDate date) {
+    private Optional<Entitlement> findEntitlement(LocalDate date) {
         return entitlements.stream()
             .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Cannot find entitlements for date %s".formatted(date)));
+            .findFirst();
+    }
+
+
+    private boolean entitlementsNotRegistered(LocalDate from, LocalDate to) {
+        return Stream.iterate(from, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(from, to) + 1)
+                .map(this::findEntitlement)
+                .anyMatch(Optional::isEmpty);
+    }
+
+
+    private boolean containsEntitlements(LocalDate from, LocalDate to) {
+        return entitlements.stream()
+                .map(Entitlement::getPeriod)
+                .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
     }
 
 
