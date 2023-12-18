@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -29,7 +30,7 @@ class Entitlement {
     void addAbsence(Absence absence) {
 
         if (containsAbsenceAt(absence.at())) {
-            throw new RuntimeException("Absence already exists at %s".formatted(absence.at()));
+            throw new DomainValidationException("Absence already exists at %s".formatted(absence.at()));
         }
 
         absences.add(absence);
@@ -46,4 +47,5 @@ class Entitlement {
     boolean containsAbsenceAt(LocalDate at) {
         return absences.stream().anyMatch(absence -> absence.at().equals(at));
     }
+
 }

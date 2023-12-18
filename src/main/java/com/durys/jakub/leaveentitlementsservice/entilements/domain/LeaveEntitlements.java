@@ -2,7 +2,6 @@ package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
-
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
 import lombok.AccessLevel;
@@ -11,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent.*;
@@ -61,6 +62,10 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
+
+        if (containsEntitlements(from, to)) {
+            throw new DomainValidationException("Entitlements already exists in period");
+        }
 
         apply(new LeaveEntitlementsGranted(from, to, days));
     }
@@ -125,6 +130,13 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
                 .limit(ChronoUnit.DAYS.between(from, to) + 1)
                 .map(this::findEntitlement)
                 .anyMatch(Optional::isEmpty);
+    }
+
+
+    boolean containsEntitlements(LocalDate from, LocalDate to) {
+        return entitlements.stream()
+                .map(Entitlement::getPeriod)
+                .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
     }
 
 
