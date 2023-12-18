@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
@@ -53,6 +54,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         switch (event) {
             case LeaveEntitlementsGranted granted -> handle(granted);
             case LeaveEntitlementsInitialized initialized -> handle(initialized);
+            case AbsenceAppended absenceAppended -> handle(absenceAppended);
             default -> log.warn("Not supported event");
         }
     }
@@ -65,7 +67,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
 
         if (entitlementsNotRegistered(from, to)) {
-            throw new RuntimeException("Entitlements not registered");
+            throw new DomainValidationException("Entitlements not registered");
         }
 
         apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
@@ -81,6 +83,10 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     private void handle(LeaveEntitlementsGranted event) {
         Entitlement entitlement = new Entitlement(event.from(), event.to(), event.days());
         entitlements.add(entitlement);
+    }
+
+    private void handle(AbsenceAppended event) {
+
     }
 
 
