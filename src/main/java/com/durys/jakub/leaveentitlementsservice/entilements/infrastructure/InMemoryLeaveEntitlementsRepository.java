@@ -5,10 +5,11 @@ import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlem
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlementsRepository;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
-import lombok.SneakyThrows;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryLeaveEntitlementsRepository implements LeaveEntitlementsRepository {
@@ -36,11 +37,25 @@ public class InMemoryLeaveEntitlementsRepository implements LeaveEntitlementsRep
     @Override
     public void save(LeaveEntitlements entitlements) {
 
-        List<Event> events = entitlements.getEvents()
+        List<Event> pendingEvents = entitlements.getEvents()
                 .stream()
                 .map(event -> new Event(event.aggregateId(), event.getClass(), Serializer.serialize(event)))
                 .toList();
 
+        List<Event> events = getEvents(entitlements.id());
+        events.addAll(pendingEvents);
+
         DB.put(entitlements.id(), events);
+    }
+
+    private List<Event> getEvents(LeaveEntitlements.Id id) {
+
+        List<Event> events = DB.get(id);
+
+        if (Objects.isNull(events)) {
+            return new ArrayList<>();
+        }
+
+        return events;
     }
 }
