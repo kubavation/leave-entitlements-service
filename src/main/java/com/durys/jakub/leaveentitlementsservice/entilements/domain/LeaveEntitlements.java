@@ -10,16 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent.*;
 
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private static final String TYPE = "LeaveEntitlement";
@@ -43,9 +41,9 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
 
     public LeaveEntitlements(Id identifier) {
-        super(identifier, TYPE);
         apply(new LeaveEntitlementsInitialized(identifier));
     }
+
 
     @Override
     public void handle(LeaveEntitlementsEvent event) {
@@ -67,7 +65,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             throw new DomainValidationException("Entitlements already exists in period");
         }
 
-        apply(new LeaveEntitlementsGranted(from, to, days));
+        apply(new LeaveEntitlementsGranted(identifier, from, to, days));
     }
 
     public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
@@ -78,12 +76,12 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         //todo days validation
 
-        apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
+        apply(new AbsenceAppended(identifier, from, to, workingTimeSchedule.days()));
     }
 
     public void withdrawAbsence(LocalDate from, LocalDate to) {
 
-        apply(new AbsenceWithdrawed(from, to));
+        apply(new AbsenceWithdrawed(identifier, from, to));
     }
 
 
@@ -139,6 +137,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return entitlements.stream()
                 .map(Entitlement::getPeriod)
                 .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
+    }
+
+    public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {
+
+        var leaveEntitlement = new LeaveEntitlements();
+
+        leaveEntitlement.load(events);
+
+        return leaveEntitlement;
     }
 
 

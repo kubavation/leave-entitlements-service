@@ -6,13 +6,19 @@ public class AbsenceConfiguration {
         Days, Hours
     }
 
-    private final boolean overdueLeave;
+    private final boolean overdueAvailable;
     private final Settlement settlement;
 
-    //todo
-
-    AbsenceConfiguration(boolean overdueLeave, Settlement settlement) {
-        this.overdueLeave = overdueLeave;
+    AbsenceConfiguration(boolean overdueAvailable, Settlement settlement) {
+        this.overdueAvailable = overdueAvailable;
         this.settlement = settlement;
+    }
+
+    public boolean overdueAvailable() {
+        return overdueAvailable;
+    }
+
+    public Settlement settlement() {
+        return settlement;
     }
 }

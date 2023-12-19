@@ -13,21 +13,20 @@ public final class Event {
     private String aggregateType;
     private final Instant at;
     private final byte[] data;
+    private String clazz;
 
-    public Event(UUID id, Object aggregateId, String type, Instant at, byte[] data) {
+    public Event(UUID id, Object aggregateId, String type, Instant at, byte[] data, String clazz) {
         this.id = id;
         this.aggregateId = aggregateId;
         this.type = type;
         this.at = at;
         this.data = data;
+        this.clazz = clazz;
     }
 
-    public Event(UUID id, Object aggregateId, String type, byte[] data) {
-        this(id, aggregateId, type, Instant.now(), data);
-    }
 
-    public Event(Object aggregateId, String type, byte[] data) {
-        this(UUID.randomUUID(), aggregateId, type, Instant.now(), data);
+    public Event(Object aggregateId, Class<?> type, byte[] data) {
+        this(UUID.randomUUID(), aggregateId, type.getSimpleName(), Instant.now(), data, type.getName());
     }
 
 

@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ class LeaveEntitlementsTest {
 
         LeaveEntitlements entitlements = LeaveEntitlements.Factory.create(absence, tenantId);
 
-        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event.getType().equals("LeaveEntitlementsInitialized")));
+        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsInitialized));
         assertEquals(new LeaveEntitlements.Id(absence, tenantId), entitlements.id());
     }
 
@@ -28,7 +29,7 @@ class LeaveEntitlementsTest {
 
         entitlements.grantEntitlements(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), 26);
 
-        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event.getType().equals("LeaveEntitlementsGranted")));
+        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsGranted));
     }
 
 
