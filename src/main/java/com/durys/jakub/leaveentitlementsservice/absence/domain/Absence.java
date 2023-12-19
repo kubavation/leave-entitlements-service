@@ -1,6 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.absence.domain;
 
-public class AbsenceConfiguration {
+public class Absence {
 
     public enum Settlement {
         Days, Hours
@@ -9,7 +9,7 @@ public class AbsenceConfiguration {
     private final boolean overdueAvailable;
     private final Settlement settlement;
 
-    AbsenceConfiguration(boolean overdueAvailable, Settlement settlement) {
+    public Absence(boolean overdueAvailable, Settlement settlement) {
         this.overdueAvailable = overdueAvailable;
         this.settlement = settlement;
     }
