@@ -1,4 +1,4 @@
-package com.durys.jakub.leaveentitlementsservice.absence;
+package com.durys.jakub.leaveentitlementsservice.absence.domain;
 
 import java.util.UUID;
 

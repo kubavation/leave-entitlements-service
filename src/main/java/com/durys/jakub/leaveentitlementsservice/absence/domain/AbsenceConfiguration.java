@@ -1,4 +1,4 @@
-package com.durys.jakub.leaveentitlementsservice.absence;
+package com.durys.jakub.leaveentitlementsservice.absence.domain;
 
 public class AbsenceConfiguration {
 
@@ -9,7 +9,7 @@ public class AbsenceConfiguration {
     private final boolean overdueAvailable;
     private final Settlement settlement;
 
-    AbsenceConfiguration(boolean overdueAvailable, Settlement settlement) {
+    public AbsenceConfiguration(boolean overdueAvailable, Settlement settlement) {
         this.overdueAvailable = overdueAvailable;
         this.settlement = settlement;
     }
