@@ -7,12 +7,36 @@ import java.time.LocalDate;
 
 public sealed interface LeaveEntitlementsEvent extends DomainEvent {
 
-    record AbsenceAppended(LocalDate from, LocalDate to, Long days) implements LeaveEntitlementsEvent {}
+    record AbsenceAppended(LeaveEntitlements.Id id, LocalDate from, LocalDate to, Long days) implements LeaveEntitlementsEvent {
 
-    record AbsenceWithdrawed(LocalDate from, LocalDate to) implements LeaveEntitlementsEvent {}
+        @Override
+        public Object aggregateId() {
+            return id;
+        }
+    }
 
-    record LeaveEntitlementsGranted(LocalDate from, LocalDate to, Integer days) implements LeaveEntitlementsEvent {}
+    record AbsenceWithdrawed(LeaveEntitlements.Id id, LocalDate from, LocalDate to) implements LeaveEntitlementsEvent {
 
-    record LeaveEntitlementsInitialized(LeaveEntitlements.Id identifier) implements LeaveEntitlementsEvent {}
+        @Override
+        public Object aggregateId() {
+            return id;
+        }
+    }
+
+    record LeaveEntitlementsGranted(LeaveEntitlements.Id id, LocalDate from, LocalDate to, Integer days) implements LeaveEntitlementsEvent {
+
+        @Override
+        public Object aggregateId() {
+            return id;
+        }
+    }
+
+    record LeaveEntitlementsInitialized(LeaveEntitlements.Id identifier) implements LeaveEntitlementsEvent {
+
+        @Override
+        public Object aggregateId() {
+            return identifier;
+        }
+    }
 
 }

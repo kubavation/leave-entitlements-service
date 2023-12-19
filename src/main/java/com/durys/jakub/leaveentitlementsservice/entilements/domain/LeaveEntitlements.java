@@ -67,7 +67,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             throw new DomainValidationException("Entitlements already exists in period");
         }
 
-        apply(new LeaveEntitlementsGranted(from, to, days));
+        apply(new LeaveEntitlementsGranted(identifier, from, to, days));
     }
 
     public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
@@ -78,12 +78,12 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         //todo days validation
 
-        apply(new AbsenceAppended(from, to, workingTimeSchedule.days()));
+        apply(new AbsenceAppended(identifier, from, to, workingTimeSchedule.days()));
     }
 
     public void withdrawAbsence(LocalDate from, LocalDate to) {
 
-        apply(new AbsenceWithdrawed(from, to));
+        apply(new AbsenceWithdrawed(identifier, from, to));
     }
 
 

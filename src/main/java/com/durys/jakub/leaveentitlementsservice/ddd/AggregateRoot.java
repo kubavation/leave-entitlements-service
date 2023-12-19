@@ -39,7 +39,7 @@ public abstract class AggregateRoot<T extends DomainEvent> {
 
     protected void validate(T event) {
 
-        if (Objects.isNull(event)) {//|| !Objects.equals(event.getAggregateId(), id)) {
+        if (Objects.isNull(event)) {
             throw new RuntimeException("Invalid event");
         }
 
