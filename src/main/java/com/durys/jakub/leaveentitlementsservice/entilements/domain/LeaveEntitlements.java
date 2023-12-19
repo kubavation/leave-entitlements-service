@@ -10,16 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent.*;
 
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private static final String TYPE = "LeaveEntitlement";
@@ -43,9 +41,9 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
 
     public LeaveEntitlements(Id identifier) {
-        super(identifier, TYPE);
         apply(new LeaveEntitlementsInitialized(identifier));
     }
+
 
     @Override
     public void handle(LeaveEntitlementsEvent event) {
@@ -139,6 +137,16 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return entitlements.stream()
                 .map(Entitlement::getPeriod)
                 .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
+    }
+
+    public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {
+
+        LeaveEntitlements leaveEntitlements = new LeaveEntitlements();
+
+        events
+            .forEach(leaveEntitlements::handle);
+
+        return leaveEntitlements;
     }
 
 
