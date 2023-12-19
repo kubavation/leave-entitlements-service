@@ -1,7 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.ddd;
 
 import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
-import com.durys.jakub.leaveentitlementsservice.es.Event;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ public abstract class AggregateRoot<T extends DomainEvent> {
     public abstract void handle(T event);
 
     public void raise(T event) {
-
         validate(event);
         handle(event);
         incrementVersion();
@@ -32,13 +30,17 @@ public abstract class AggregateRoot<T extends DomainEvent> {
         events.add(event);
     }
 
+    protected final void load(List<T> events) {
+        events.stream()
+                .forEach(this::handle);
+    }
+
 
     protected void validate(T event) {
 
         if (Objects.isNull(event)) {
             throw new RuntimeException("Invalid event");
         }
-
     }
 
 

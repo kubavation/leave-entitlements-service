@@ -141,12 +141,11 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {
 
-        LeaveEntitlements leaveEntitlements = new LeaveEntitlements();
+        var leaveEntitlement = new LeaveEntitlements();
 
-        events
-            .forEach(leaveEntitlements::handle);
+        leaveEntitlement.load(events);
 
-        return leaveEntitlements;
+        return leaveEntitlement;
     }
 
 
