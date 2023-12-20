@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.absence.domain.AbsenceConfiguration;
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent.*;
@@ -19,8 +21,6 @@ import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
-
-    private static final String TYPE = "LeaveEntitlement";
 
     public record Id(AbsenceType absenceType, TenantId tenantId) {
 
@@ -68,13 +68,24 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         apply(new LeaveEntitlementsGranted(identifier, from, to, days));
     }
 
-    public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule) {
+    public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule, AbsenceConfiguration absence) {
 
         if (entitlementsNotRegistered(from, to)) {
             throw new DomainValidationException("Entitlements not registered");
         }
 
-        //todo days validation
+        if (!absence.overdueAvailable()) {
+
+            Entitlement entitlement = findEntitlement(to)
+                    .orElseThrow(() -> new RuntimeException("Entitlement for date %s not found".formatted(to)));
+
+            if (workingTimeSchedule.days() > entitlement.remainingAmount()) {
+                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+            }
+
+            //todo when more than one entitlement
+
+        }
 
         apply(new AbsenceAppended(identifier, from, to, workingTimeSchedule.days()));
     }
@@ -92,7 +103,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
     private void handle(LeaveEntitlementsGranted event) {
-        Entitlement entitlement = new Entitlement(event.from(), event.to(), event.days());
+        Entitlement entitlement = new Entitlement(UUID.randomUUID(), event.from(), event.to(), event.days());
         entitlements.add(entitlement);
     }
 
@@ -130,6 +141,13 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
                 .limit(ChronoUnit.DAYS.between(from, to) + 1)
                 .map(this::findEntitlement)
                 .anyMatch(Optional::isEmpty);
+    }
+
+    private Set<Entitlement> findEntitlements(LocalDate from, LocalDate to) {
+        return Stream.iterate(from, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(from, to) + 1)
+                .flatMap(date -> findEntitlement(date).stream())
+                .collect(Collectors.toSet());
     }
 
 

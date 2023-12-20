@@ -26,5 +26,4 @@ class LeaveEntitlementsApplicationServiceTest {
         LeaveEntitlements entitlements = repository.load(id);
         assertNotNull(entitlements);
     }
-
 }
