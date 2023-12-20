@@ -7,21 +7,25 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter(AccessLevel.PACKAGE)
 class Entitlement {
 
+    private final EntitlementId id;
     private final Period period;
     private final Amount amount;
     private final List<Absence> absences;
 
-    Entitlement(Period period, Amount amount) {
+    Entitlement(EntitlementId id, Period period, Amount amount) {
+        this.id = id;
         this.period = period;
         this.amount = amount;
         this.absences = new ArrayList<>();
     }
 
-    Entitlement(LocalDate from, LocalDate to, Integer days) {
+    Entitlement(UUID id, LocalDate from, LocalDate to, Integer days) {
+        this.id = new EntitlementId(id);
         this.period = new Period(from, to);
         this.amount = new Amount(days);
         this.absences = new ArrayList<>();
