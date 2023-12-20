@@ -47,8 +47,16 @@ class Entitlement {
 
     }
 
+    Integer remainingAmount() {
+        return amount.days() - amountUsed();
+    }
 
-    boolean containsAbsenceAt(LocalDate at) {
+
+    private Integer amountUsed() {
+        return absences.size();
+    }
+
+    private boolean containsAbsenceAt(LocalDate at) {
         return absences.stream().anyMatch(absence -> absence.at().equals(at));
     }
 
