@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 public record WorkingTimeSchedule(Set<Day> days) {
 
-
     public Long numberOfDays() {
         return (long) days.size();
     }
