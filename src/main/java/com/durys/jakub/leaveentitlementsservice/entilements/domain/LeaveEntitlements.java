@@ -79,7 +79,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             entitlements.stream()
                 .forEach(entitlement -> {
                             long numberOfDays = workingTimeSchedule
-                                    .numberOfWorkingDaysInRange(entitlement.getPeriod().from(), entitlement.getPeriod().to());
+                                    .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
 
                             if (numberOfDays > entitlement.remainingAmount()) {
                                 throw new DomainValidationException("Amount days of absence exceeds entitlement amount");

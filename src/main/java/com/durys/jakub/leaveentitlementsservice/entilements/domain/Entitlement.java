@@ -60,4 +60,11 @@ class Entitlement {
         return absences.stream().anyMatch(absence -> absence.at().equals(at));
     }
 
+    LocalDate from() {
+        return period.from();
+    }
+
+    LocalDate to() {
+        return period.to();
+    }
 }
