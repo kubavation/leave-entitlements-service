@@ -90,9 +90,8 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         apply(new AbsenceAppended(identifier, UUID.randomUUID(), from, to, workingTimeSchedule.numberOfWorkingDays()));
     }
 
-    public void withdrawAbsence(LocalDate from, LocalDate to) {
-
-        apply(new AbsenceWithdrawed(identifier, from, to));
+    public void withdrawAbsence(UUID absenceId) {
+        apply(new AbsenceWithdrawed(identifier, absenceId));
     }
 
 
@@ -119,7 +118,9 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
     private void handle(AbsenceWithdrawed event) {
-        //todo
+        
+        entitlements
+                .forEach(entitlement -> entitlement.withdrawAbsence(event.absenceId()));
     }
 
 

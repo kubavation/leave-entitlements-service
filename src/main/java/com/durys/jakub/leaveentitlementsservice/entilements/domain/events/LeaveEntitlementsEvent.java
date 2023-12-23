@@ -16,7 +16,7 @@ public sealed interface LeaveEntitlementsEvent extends DomainEvent {
         }
     }
 
-    record AbsenceWithdrawed(LeaveEntitlements.Id id, LocalDate from, LocalDate to) implements LeaveEntitlementsEvent {
+    record AbsenceWithdrawed(LeaveEntitlements.Id id, UUID absenceId) implements LeaveEntitlementsEvent {
 
         @Override
         public Object aggregateId() {
