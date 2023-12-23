@@ -24,4 +24,8 @@ public record WorkingTimeSchedule(Set<Day> days) {
                 .collect(Collectors.toSet());
     }
 
+    public Long numberOfWorkingDaysInRange(LocalDate from, LocalDate to) {
+        return (long) loadInRange(from, to).size();
+    }
+
 }

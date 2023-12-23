@@ -76,31 +76,34 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         if (!absence.overdueAvailable()) {
 
-            Entitlement entitlement = findEntitlement(to)
-                    .orElseThrow(() -> new RuntimeException("Entitlement for date %s not found".formatted(to)));
-
-            if (workingTimeSchedule.numberOfWorkingDays() > entitlement.remainingAmount()) {
-                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
-            }
-
-            //todo
             entitlements.stream()
-                .forEach(ent -> {
-                            int numberOfDays = workingTimeSchedule.loadInRange(ent.getPeriod().from(), ent.getPeriod().to()).size();
+                .forEach(entitlement -> {
 
-                            if (numberOfDays > ent.remainingAmount()) {
+                            long numberOfDays = workingTimeSchedule
+                                    .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
+
+                            if (numberOfDays > entitlement.remainingAmount()) {
                                 throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
                             }
                         });
+        } else {
+
+
+            long numberOfDays = workingTimeSchedule.numberOfWorkingDays();
+
+            Integer remainingAmount = availableDaysTo(to);
+
+            if (numberOfDays > remainingAmount) {
+                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+            }
 
         }
 
-        apply(new AbsenceAppended(identifier, from, to, workingTimeSchedule.numberOfWorkingDays()));
+        apply(new AbsenceAppended(identifier, UUID.randomUUID(), from, to, workingTimeSchedule.numberOfWorkingDays()));
     }
 
-    public void withdrawAbsence(LocalDate from, LocalDate to) {
-
-        apply(new AbsenceWithdrawed(identifier, from, to));
+    public void withdrawAbsence(UUID absenceId) {
+        apply(new AbsenceWithdrawed(identifier, absenceId));
     }
 
 
@@ -117,19 +120,19 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private void handle(AbsenceAppended event) {
 
-        UUID absenceId = UUID.randomUUID();
-
         Stream.iterate(event.from(), date -> date.plusDays(1))
                 .limit(ChronoUnit.DAYS.between(event.from(), event.to()) + 1)
                 .forEach(date -> {
                     Entitlement entitlement = findEntitlement(date)
                             .orElseThrow(RuntimeException::new);
-                    entitlement.addAbsence(new Absence(absenceId, date));
+                    entitlement.addAbsence(new Absence(event.absenceId(), date));
                 });
     }
 
     private void handle(AbsenceWithdrawed event) {
-        //todo
+
+        entitlements
+                .forEach(entitlement -> entitlement.withdrawAbsence(event.absenceId()));
     }
 
 
@@ -164,6 +167,14 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
                 .map(Entitlement::getPeriod)
                 .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
     }
+
+    private Integer availableDaysTo(LocalDate date) {
+        return entitlements.stream()
+                .filter(entitlement -> !date.isAfter(entitlement.to()))
+                .mapToInt(Entitlement::remainingAmount)
+                .sum();
+    }
+
 
     public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {
 

@@ -40,10 +40,10 @@ class Entitlement {
         absences.add(absence);
     }
 
-    void withdrawAbsence(LocalDate from, LocalDate to) {
+    void withdrawAbsence(UUID absenceId) {
 
         absences
-                .removeIf(absence -> !absence.at().isBefore(from) && !absence.at().isAfter(to));
+                .removeIf(absence -> absence.id().equals(absenceId));
 
     }
 
@@ -60,4 +60,11 @@ class Entitlement {
         return absences.stream().anyMatch(absence -> absence.at().equals(at));
     }
 
+    LocalDate from() {
+        return period.from();
+    }
+
+    LocalDate to() {
+        return period.to();
+    }
 }
