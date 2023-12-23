@@ -76,23 +76,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         if (!absence.overdueAvailable()) {
 
-            Entitlement entitlement = findEntitlement(to)
-                    .orElseThrow(() -> new RuntimeException("Entitlement for date %s not found".formatted(to)));
-
-            if (workingTimeSchedule.numberOfWorkingDays() > entitlement.remainingAmount()) {
-                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
-            }
-
-            //todo
             entitlements.stream()
-                .forEach(ent -> {
-                            int numberOfDays = workingTimeSchedule.loadInRange(ent.getPeriod().from(), ent.getPeriod().to()).size();
+                .forEach(entitlement -> {
+                            long numberOfDays = workingTimeSchedule
+                                    .numberOfWorkingDaysInRange(entitlement.getPeriod().from(), entitlement.getPeriod().to());
 
-                            if (numberOfDays > ent.remainingAmount()) {
+                            if (numberOfDays > entitlement.remainingAmount()) {
                                 throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
                             }
                         });
-
         }
 
         apply(new AbsenceAppended(identifier, from, to, workingTimeSchedule.numberOfWorkingDays()));
