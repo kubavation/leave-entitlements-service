@@ -61,7 +61,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
 
-        if (containsEntitlements(from, to)) {
+        if (entitlements.containsEntitlements(from, to)) {
             throw new DomainValidationException("Entitlements already exists in period");
         }
 
@@ -122,11 +122,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         Stream.iterate(event.from(), date -> date.plusDays(1))
                 .limit(ChronoUnit.DAYS.between(event.from(), event.to()) + 1)
-                .forEach(date -> {
-                    Entitlement entitlement = findEntitlement(date)
-                            .orElseThrow(RuntimeException::new);
-                    entitlement.addAbsence(new Absence(event.absenceId(), date));
-                });
+                .forEach(date -> entitlements.appendAbsence(new Absence(event.absenceId(), date)));
     }
 
     private void handle(AbsenceWithdrawed event) {
@@ -140,40 +136,9 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return identifier;
     }
 
-    private Optional<Entitlement> findEntitlement(LocalDate date) {
-        return entitlements.stream()
-            .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
-            .findFirst();
-    }
 
 
-    private boolean entitlementsNotRegistered(LocalDate from, LocalDate to) {
-        return Stream.iterate(from, date -> date.plusDays(1))
-                .limit(ChronoUnit.DAYS.between(from, to) + 1)
-                .map(this::findEntitlement)
-                .anyMatch(Optional::isEmpty);
-    }
 
-    private Set<Entitlement> findEntitlements(LocalDate from, LocalDate to) {
-        return Stream.iterate(from, date -> date.plusDays(1))
-                .limit(ChronoUnit.DAYS.between(from, to) + 1)
-                .flatMap(date -> findEntitlement(date).stream())
-                .collect(Collectors.toSet());
-    }
-
-
-    private boolean containsEntitlements(LocalDate from, LocalDate to) {
-        return entitlements.stream()
-                .map(Entitlement::getPeriod)
-                .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
-    }
-
-    private Integer availableDaysTo(LocalDate date) {
-        return entitlements.stream()
-                .filter(entitlement -> !date.isAfter(entitlement.to()))
-                .mapToInt(Entitlement::remainingAmount)
-                .sum();
-    }
 
 
     public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {

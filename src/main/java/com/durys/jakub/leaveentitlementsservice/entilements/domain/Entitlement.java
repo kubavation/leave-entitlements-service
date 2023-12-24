@@ -67,4 +67,5 @@ class Entitlement {
     LocalDate to() {
         return period.to();
     }
+
 }
