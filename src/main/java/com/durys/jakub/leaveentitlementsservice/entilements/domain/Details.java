@@ -28,7 +28,7 @@ class Details {
 
 
 
-    void withdrawAbsence(UUID absenceId) {
+    void withdrawAbsence(AbsenceId absenceId) {
         entitlements
                 .forEach(entitlement -> entitlement.withdrawAbsence(absenceId));
     }

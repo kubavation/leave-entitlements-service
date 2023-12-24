@@ -40,7 +40,7 @@ class Entitlement {
         absences.add(absence);
     }
 
-    void withdrawAbsence(UUID absenceId) {
+    void withdrawAbsence(AbsenceId absenceId) {
 
         absences
                 .removeIf(absence -> absence.id().equals(absenceId));

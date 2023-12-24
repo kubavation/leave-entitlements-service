@@ -126,7 +126,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
     private void handle(AbsenceWithdrawed event) {
-        entitlements.withdrawAbsence(event.absenceId());
+        entitlements.withdrawAbsence(new AbsenceId(event.absenceId()));
     }
 
 
