@@ -70,7 +70,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule, AbsenceConfiguration absence) {
 
-        if (entitlementsNotRegistered(from, to)) {
+        if (entitlements.entitlementsNotRegistered(from, to)) {
             throw new DomainValidationException("Entitlements not registered");
         }
 
@@ -126,9 +126,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
     private void handle(AbsenceWithdrawed event) {
-
-        entitlements
-                .forEach(entitlement -> entitlement.withdrawAbsence(event.absenceId()));
+        entitlements.withdrawAbsence(event.absenceId());
     }
 
 

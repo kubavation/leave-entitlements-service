@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,13 +27,20 @@ class Details {
     }
 
 
+
+    void withdrawAbsence(UUID absenceId) {
+        entitlements
+                .forEach(entitlement -> entitlement.withdrawAbsence(absenceId));
+    }
+
+
     private Optional<Entitlement> findEntitlement(LocalDate date) {
         return entitlements.stream()
                 .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
                 .findFirst();
     }
 
-    private boolean entitlementsNotRegistered(LocalDate from, LocalDate to) {
+    boolean entitlementsNotRegistered(LocalDate from, LocalDate to) {
         return Stream.iterate(from, date -> date.plusDays(1))
                 .limit(ChronoUnit.DAYS.between(from, to) + 1)
                 .map(this::findEntitlement)
@@ -59,6 +67,5 @@ class Details {
                 .mapToInt(Entitlement::remainingAmount)
                 .sum();
     }
-
 
 }
