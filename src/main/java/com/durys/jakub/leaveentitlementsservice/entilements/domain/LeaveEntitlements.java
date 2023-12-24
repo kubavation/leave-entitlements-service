@@ -37,7 +37,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private Id identifier;
     private State state;
-    private Set<Entitlement> entitlements;
+    private Details entitlements;
 
 
     public LeaveEntitlements(Id identifier) {
@@ -110,7 +110,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     private void handle(LeaveEntitlementsInitialized event) {
         this.identifier = event.identifier();
         this.state = State.Active;
-        this.entitlements = new HashSet<>();
+        this.entitlements = new Details();
     }
 
     private void handle(LeaveEntitlementsGranted event) {
