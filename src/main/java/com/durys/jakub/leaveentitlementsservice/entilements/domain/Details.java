@@ -1,5 +1,9 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.absence.domain.AbsenceConfiguration;
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
+import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -20,7 +24,7 @@ class Details {
         this.entitlements = new HashSet<>();
     }
 
-    
+
 
     void add(Entitlement entitlement) {
         entitlements.add(entitlement);
@@ -77,4 +81,31 @@ class Details {
                 .sum();
     }
 
+    void validateAmount(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule, AbsenceConfiguration absence) {
+
+        if (!absence.overdueAvailable()) {
+
+            entitlements.stream()
+                    .forEach(entitlement -> {
+
+                        long numberOfDays = workingTimeSchedule
+                                .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
+
+                        if (numberOfDays > entitlement.remainingAmount()) {
+                            throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+                        }
+                    });
+        } else {
+
+
+            long numberOfDays = workingTimeSchedule.numberOfWorkingDays();
+
+            Integer remainingAmount = availableDaysTo(to);
+
+            if (numberOfDays > remainingAmount) {
+                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+            }
+
+        }
+    }
 }
