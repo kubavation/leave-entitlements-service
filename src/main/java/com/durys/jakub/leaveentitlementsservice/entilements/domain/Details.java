@@ -86,7 +86,7 @@ class Details {
         if (!absence.overdueAvailable()) {
             validateAmount(schedule);
         } else {
-            validateOverdueAmount();
+            validateOverdueAmount(schedule);
         }
     }
 
