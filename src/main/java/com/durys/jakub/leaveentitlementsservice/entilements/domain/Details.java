@@ -25,7 +25,6 @@ class Details {
     }
 
 
-
     void add(Entitlement entitlement) {
         entitlements.add(entitlement);
     }

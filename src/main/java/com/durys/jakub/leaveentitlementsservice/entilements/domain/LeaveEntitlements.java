@@ -39,12 +39,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     private State state;
     private Details entitlements;
 
-
-    public LeaveEntitlements(Id identifier) {
-        apply(new LeaveEntitlementsInitialized(identifier));
-    }
-
-
     @Override
     public void handle(LeaveEntitlementsEvent event) {
 
@@ -57,6 +51,11 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             case AbsenceWithdrawed absenceWithdrawed -> handle(absenceWithdrawed);
             default -> log.warn("Not supported event");
         }
+    }
+
+
+    public LeaveEntitlements(Id identifier) {
+        apply(new LeaveEntitlementsInitialized(identifier));
     }
 
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
@@ -110,8 +109,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     public Id id() {
         return identifier;
     }
-
-
 
     public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {
 
