@@ -76,7 +76,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         entitlements.validateAmount(schedule, absence);
 
-        apply(new AbsenceAppended(identifier, UUID.randomUUID(), from, to, workingTimeSchedule.numberOfWorkingDays()));
+        apply(new AbsenceAppended(identifier, UUID.randomUUID(), schedule.from(), schedule.to(), schedule.numberOfWorkingDays()));
     }
 
     public void withdrawAbsence(UUID absenceId) {
