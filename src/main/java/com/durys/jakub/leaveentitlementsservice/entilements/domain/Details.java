@@ -2,16 +2,25 @@ package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class Details {
 
-    private Set<Entitlement> entitlements;
+    private final Set<Entitlement> entitlements;
 
+    Details(Set<Entitlement> entitlements) {
+        this.entitlements = entitlements;
+    }
+
+    Details() {
+        this.entitlements = new HashSet<>();
+    }
+
+    
 
     void add(Entitlement entitlement) {
         entitlements.add(entitlement);
