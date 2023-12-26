@@ -68,13 +68,13 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         apply(new LeaveEntitlementsGranted(identifier, from, to, days));
     }
 
-    public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule, AbsenceConfiguration absence) {
+    public void appendAbsence(WorkingTimeSchedule schedule, AbsenceConfiguration absence) {
 
-        if (entitlements.entitlementsNotRegistered(from, to)) {
+        if (entitlements.entitlementsNotRegistered(schedule.from(), schedule.to())) {
             throw new DomainValidationException("Entitlements not registered");
         }
 
-        entitlements.validateAmount(from, to, workingTimeSchedule, absence);
+        entitlements.validateAmount(schedule, absence);
 
         apply(new AbsenceAppended(identifier, UUID.randomUUID(), from, to, workingTimeSchedule.numberOfWorkingDays()));
     }
@@ -124,6 +124,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         return leaveEntitlement;
     }
-    
+
 
 }

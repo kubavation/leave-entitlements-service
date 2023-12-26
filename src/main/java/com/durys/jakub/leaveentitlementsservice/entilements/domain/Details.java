@@ -81,31 +81,35 @@ class Details {
                 .sum();
     }
 
-    void validateAmount(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule, AbsenceConfiguration absence) {
+    void validateAmount(WorkingTimeSchedule schedule, AbsenceConfiguration absence) {
 
         if (!absence.overdueAvailable()) {
-
-            entitlements.stream()
-                    .forEach(entitlement -> {
-
-                        long numberOfDays = workingTimeSchedule
-                                .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
-
-                        if (numberOfDays > entitlement.remainingAmount()) {
-                            throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
-                        }
-                    });
+            validateAmount(schedule);
         } else {
-
-
-            long numberOfDays = workingTimeSchedule.numberOfWorkingDays();
-
-            Integer remainingAmount = availableDaysTo(to);
-
-            if (numberOfDays > remainingAmount) {
-                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
-            }
-
+            validateOverdueAmount();
         }
+    }
+
+    private void validateOverdueAmount(WorkingTimeSchedule schedule) {
+        long numberOfDays = schedule.numberOfWorkingDays();
+
+        Integer remainingAmount = availableDaysTo(schedule.to());
+
+        if (numberOfDays > remainingAmount) {
+            throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+        }
+    }
+
+    private void validateAmount(WorkingTimeSchedule schedule) {
+        entitlements.stream()
+                .forEach(entitlement -> {
+
+                    long numberOfDays = schedule
+                            .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
+
+                    if (numberOfDays > entitlement.remainingAmount()) {
+                        throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+                    }
+                });
     }
 }
