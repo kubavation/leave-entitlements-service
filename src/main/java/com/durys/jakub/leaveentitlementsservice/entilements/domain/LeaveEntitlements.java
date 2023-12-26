@@ -124,15 +124,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
         return leaveEntitlement;
     }
-
-
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Factory {
-
-        public static LeaveEntitlements create(String absence, UUID tenantId) {
-            return new LeaveEntitlements(new Id(absence, tenantId));
-        }
-
-    }
+    
 
 }
