@@ -1,16 +1,28 @@
 package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
+import com.durys.jakub.leaveentitlementsservice.absence.domain.AbsenceConfiguration;
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
+import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class Details {
 
-    private Set<Entitlement> entitlements;
+    private final Set<Entitlement> entitlements;
+
+    Details(Set<Entitlement> entitlements) {
+        this.entitlements = entitlements;
+    }
+
+    Details() {
+        this.entitlements = new HashSet<>();
+    }
 
 
     void add(Entitlement entitlement) {
@@ -68,4 +80,35 @@ class Details {
                 .sum();
     }
 
+    void validateAmount(WorkingTimeSchedule schedule, AbsenceConfiguration absence) {
+
+        if (!absence.overdueAvailable()) {
+            validateAmount(schedule);
+        } else {
+            validateOverdueAmount(schedule);
+        }
+    }
+
+    private void validateOverdueAmount(WorkingTimeSchedule schedule) {
+        long numberOfDays = schedule.numberOfWorkingDays();
+
+        Integer remainingAmount = availableDaysTo(schedule.to());
+
+        if (numberOfDays > remainingAmount) {
+            throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+        }
+    }
+
+    private void validateAmount(WorkingTimeSchedule schedule) {
+        entitlements.stream()
+                .forEach(entitlement -> {
+
+                    long numberOfDays = schedule
+                            .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
+
+                    if (numberOfDays > entitlement.remainingAmount()) {
+                        throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
+                    }
+                });
+    }
 }

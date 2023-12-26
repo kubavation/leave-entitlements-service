@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record WorkingTimeSchedule(Set<Day> days) {
+public record WorkingTimeSchedule(LocalDate from, LocalDate to, Set<Day> days) {
 
     public Long numberOfDays() {
         return (long) days.size();
@@ -18,7 +18,6 @@ public record WorkingTimeSchedule(Set<Day> days) {
     }
 
     public Set<Day> loadInRange(LocalDate from, LocalDate to) {
-        //todo validation
         return days.stream()
                 .filter(day -> !day.at().isBefore(from) && !day.at().isAfter(to))
                 .collect(Collectors.toSet());

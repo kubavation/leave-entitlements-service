@@ -18,6 +18,6 @@ class InMemoryWorkingTimeScheduleRepository implements WorkingTimeScheduleReposi
                 .map(date -> new Day(date, BigDecimal.valueOf(8)))
                 .collect(Collectors.toSet());
 
-        return new WorkingTimeSchedule(days);
+        return new WorkingTimeSchedule(from, to, days);
     }
 }

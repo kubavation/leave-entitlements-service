@@ -39,12 +39,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     private State state;
     private Details entitlements;
 
-
-    public LeaveEntitlements(Id identifier) {
-        apply(new LeaveEntitlementsInitialized(identifier));
-    }
-
-
     @Override
     public void handle(LeaveEntitlementsEvent event) {
 
@@ -59,6 +53,11 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         }
     }
 
+
+    public LeaveEntitlements(Id identifier) {
+        apply(new LeaveEntitlementsInitialized(identifier));
+    }
+
     public void grantEntitlements(LocalDate from, LocalDate to, Integer days) {
 
         if (entitlements.containsEntitlements(from, to)) {
@@ -68,38 +67,15 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         apply(new LeaveEntitlementsGranted(identifier, from, to, days));
     }
 
-    public void appendAbsence(LocalDate from, LocalDate to, WorkingTimeSchedule workingTimeSchedule, AbsenceConfiguration absence) {
+    public void appendAbsence(WorkingTimeSchedule schedule, AbsenceConfiguration absence) {
 
-        if (entitlements.entitlementsNotRegistered(from, to)) {
+        if (entitlements.entitlementsNotRegistered(schedule.from(), schedule.to())) {
             throw new DomainValidationException("Entitlements not registered");
         }
 
-        if (!absence.overdueAvailable()) {
+        entitlements.validateAmount(schedule, absence);
 
-            entitlements.stream()
-                .forEach(entitlement -> {
-
-                            long numberOfDays = workingTimeSchedule
-                                    .numberOfWorkingDaysInRange(entitlement.from(), entitlement.to());
-
-                            if (numberOfDays > entitlement.remainingAmount()) {
-                                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
-                            }
-                        });
-        } else {
-
-
-            long numberOfDays = workingTimeSchedule.numberOfWorkingDays();
-
-            Integer remainingAmount = availableDaysTo(to);
-
-            if (numberOfDays > remainingAmount) {
-                throw new DomainValidationException("Amount days of absence exceeds entitlement amount");
-            }
-
-        }
-
-        apply(new AbsenceAppended(identifier, UUID.randomUUID(), from, to, workingTimeSchedule.numberOfWorkingDays()));
+        apply(new AbsenceAppended(identifier, UUID.randomUUID(), schedule.from(), schedule.to(), schedule.numberOfWorkingDays()));
     }
 
     public void withdrawAbsence(UUID absenceId) {
@@ -134,11 +110,6 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return identifier;
     }
 
-
-
-
-
-
     public static LeaveEntitlements recreate(List<LeaveEntitlementsEvent> events) {
 
         var leaveEntitlement = new LeaveEntitlements();
@@ -148,14 +119,5 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
         return leaveEntitlement;
     }
 
-
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Factory {
-
-        public static LeaveEntitlements create(String absence, UUID tenantId) {
-            return new LeaveEntitlements(new Id(absence, tenantId));
-        }
-
-    }
 
 }
