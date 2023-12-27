@@ -37,6 +37,18 @@ class EntitlementTest {
         assertEquals("Absence already exists at %s".formatted(absence.at()), exception.getMessage());
     }
 
+    @Test
+    void shouldWithdrawAbsence() {
+        var absence = new Absence(UUID.randomUUID(), LocalDate.of(2023, 5, 5));
+        Entitlement entitlement = init(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31));
+        entitlement.addAbsence(absence);
+
+
+        entitlement.withdrawAbsence(absence.id());
+
+        assertFalse(entitlement.containsAbsenceAt(absence.at()));
+    }
+
     Entitlement init(LocalDate from, LocalDate to) {
         return new Entitlement(UUID.randomUUID(), from, to, 26);
     }

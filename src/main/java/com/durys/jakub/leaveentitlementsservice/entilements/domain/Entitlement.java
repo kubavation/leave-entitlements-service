@@ -14,20 +14,20 @@ class Entitlement {
 
     private final EntitlementId id;
     private final Period period;
-    private final Amount amount;
+    private final Amount amountEntitled;
     private final List<Absence> absences;
 
-    Entitlement(EntitlementId id, Period period, Amount amount) {
+    Entitlement(EntitlementId id, Period period, Amount amountEntitled) {
         this.id = id;
         this.period = period;
-        this.amount = amount;
+        this.amountEntitled = amountEntitled;
         this.absences = new ArrayList<>();
     }
 
     Entitlement(UUID id, LocalDate from, LocalDate to, Integer days) {
         this.id = new EntitlementId(id);
         this.period = new Period(from, to);
-        this.amount = new Amount(days);
+        this.amountEntitled = new Amount(days);
         this.absences = new ArrayList<>();
     }
 
@@ -46,7 +46,7 @@ class Entitlement {
     }
 
     Integer remainingAmount() {
-        return amount.days() - amountUsed();
+        return amountEntitled.days() - amountUsed();
     }
 
 
@@ -54,7 +54,7 @@ class Entitlement {
         return absences.size();
     }
 
-    private boolean containsAbsenceAt(LocalDate at) {
+    boolean containsAbsenceAt(LocalDate at) {
         return absences.stream().anyMatch(absence -> absence.at().equals(at));
     }
 
