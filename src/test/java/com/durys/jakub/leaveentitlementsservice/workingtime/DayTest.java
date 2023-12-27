@@ -21,14 +21,7 @@ class DayTest {
                 = assertThrows(DomainValidationException.class, () -> new Day(null, BigDecimal.valueOf(8)));
         assertEquals("Date cannot be empty", exception.getMessage());
     }
-
-    @Test
-    void shouldNotCreateDay_whenHoursAreEmpty() {
-        DomainValidationException exception
-                = assertThrows(DomainValidationException.class, () -> new Day(LocalDate.of(2023, 1, 1), null));
-        assertEquals("Hours cannot be empty", exception.getMessage());
-    }
-
+    
 
     @Test
     void shouldNotCreateDay_whenHoursAreLessThanZero() {

@@ -13,11 +13,7 @@ public record Day(LocalDate at, BigDecimal hours) {
            throw new DomainValidationException("Date cannot be empty");
         }
 
-        if (Objects.isNull(hours)) {
-            throw new DomainValidationException("Hours cannot be empty");
-        }
-
-        if (hours.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.nonNull(hours) && hours.compareTo(BigDecimal.ZERO) < 0) {
             throw new DomainValidationException("Invalid hours value");
         }
     }
