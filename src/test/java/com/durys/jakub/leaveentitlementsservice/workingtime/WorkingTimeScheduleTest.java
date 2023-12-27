@@ -47,10 +47,45 @@ class WorkingTimeScheduleTest {
     }
 
 
+    @Test
+    void shouldReturnDaysEqualToDaysSize() {
+
+        var from = LocalDate.of(2023, 1, 1);
+        var to = LocalDate.of(2023, 1, 3);
+        var days = generate(from, to);
+
+        var schedule = new WorkingTimeSchedule(from, to, days);
+
+        assertEquals(days.size(), schedule.numberOfDays());
+    }
+
+    @Test
+    void shouldReturnCorrectNumberOfWorkingDays() {
+
+        var from = LocalDate.of(2023, 1, 1);
+        var to = LocalDate.of(2023, 1, 3);
+        var days = generate(from, to, Set.of(LocalDate.of(2023, 1, 2)));
+
+        var schedule = new WorkingTimeSchedule(from, to, days);
+
+        assertEquals(2, schedule.numberOfWorkingDays());
+    }
+
+
+
     private static Set<Day> generate(LocalDate from, LocalDate to) {
+        return generate(from, to, Set.of());
+    }
+
+    private static Set<Day> generate(LocalDate from, LocalDate to, Set<LocalDate> daysOff) {
 
         return Stream.iterate(from, date -> !date.isAfter(to), date -> date.plusDays(1))
-                .map(date -> new Day(date, BigDecimal.valueOf(8)))
+                .map(date -> {
+                    if (daysOff.contains(date)) {
+                        return new Day(date, null);
+                    }
+                    return new Day(date, BigDecimal.valueOf(8));
+                })
                 .collect(Collectors.toSet());
     }
 
