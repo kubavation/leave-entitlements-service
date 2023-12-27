@@ -16,7 +16,7 @@ class LeaveEntitlementsTest {
         UUID tenantId = UUID.randomUUID();
         String absence = "W";
 
-        LeaveEntitlements entitlements = LeaveEntitlements.Factory.create(absence, tenantId);
+        LeaveEntitlements entitlements = LeaveEntitlementsFactory.create(absence, tenantId);
 
         assertTrue(entitlements.getEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsInitialized));
         assertEquals(new LeaveEntitlements.Id(absence, tenantId), entitlements.id());
@@ -25,7 +25,7 @@ class LeaveEntitlementsTest {
     @Test
     void shouldGrantLeaveEntitlements() {
 
-        LeaveEntitlements entitlements = LeaveEntitlements.Factory.create("W", UUID.randomUUID());
+        LeaveEntitlements entitlements = LeaveEntitlementsFactory.create("W", UUID.randomUUID());
 
         entitlements.grantEntitlements(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), 26);
 
