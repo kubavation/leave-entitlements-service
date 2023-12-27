@@ -29,7 +29,6 @@ class Details {
         entitlements.add(entitlement);
     }
 
-
     void appendAbsence(Absence absence) {
 
         Entitlement entitlement = findEntitlement(absence.at())
@@ -48,7 +47,7 @@ class Details {
 
     private Optional<Entitlement> findEntitlement(LocalDate date) {
         return entitlements.stream()
-                .filter(entitlement -> !date.isBefore(entitlement.getPeriod().from()) && !date.isAfter(entitlement.getPeriod().to()))
+                .filter(entitlement -> entitlement.applicable(date))
                 .findFirst();
     }
 
@@ -70,7 +69,7 @@ class Details {
     boolean containsEntitlements(LocalDate from, LocalDate to) {
         return entitlements.stream()
                 .map(Entitlement::getPeriod)
-                .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
+                .anyMatch(period -> !(to.isBefore(period.from()) || from.isAfter(period.to())));
     }
 
     private Integer availableDaysTo(LocalDate date) {

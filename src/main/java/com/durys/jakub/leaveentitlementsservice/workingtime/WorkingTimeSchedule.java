@@ -1,11 +1,35 @@
 package com.durys.jakub.leaveentitlementsservice.workingtime;
 
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public record WorkingTimeSchedule(LocalDate from, LocalDate to, Set<Day> days) {
+
+    public WorkingTimeSchedule {
+
+        if (Objects.isNull(from)) {
+            throw new DomainValidationException("Date from cannot be empty");
+        }
+
+        if (Objects.isNull(to)) {
+            throw new DomainValidationException("Date to cannot be empty");
+        }
+
+        if (from.isAfter(to)) {
+            throw new DomainValidationException("Invalid period");
+        }
+
+        if (CollectionUtils.isEmpty(days)) {
+            throw new DomainValidationException("Invalid days definition");
+        }
+
+    }
+
 
     public Long numberOfDays() {
         return (long) days.size();
@@ -24,7 +48,10 @@ public record WorkingTimeSchedule(LocalDate from, LocalDate to, Set<Day> days) {
     }
 
     public Long numberOfWorkingDaysInRange(LocalDate from, LocalDate to) {
-        return (long) loadInRange(from, to).size();
+        return loadInRange(from, to)
+                .stream()
+                .filter(day -> Objects.nonNull(day.hours()))
+                .count();
     }
 
 }
