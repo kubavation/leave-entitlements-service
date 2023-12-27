@@ -69,7 +69,7 @@ class Details {
     boolean containsEntitlements(LocalDate from, LocalDate to) {
         return entitlements.stream()
                 .map(Entitlement::getPeriod)
-                .anyMatch(period -> !from.isBefore(period.from()) && !to.isAfter(period.to()));
+                .anyMatch(period -> !(to.isBefore(period.from()) || from.isAfter(period.to())));
     }
 
     private Integer availableDaysTo(LocalDate date) {
