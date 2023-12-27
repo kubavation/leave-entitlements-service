@@ -49,8 +49,23 @@ class EntitlementTest {
         assertFalse(entitlement.containsAbsenceAt(absence.at()));
     }
 
-    Entitlement init(LocalDate from, LocalDate to) {
-        return new Entitlement(UUID.randomUUID(), from, to, 26);
+    @Test
+    void shouldReturnRemainingAmount() {
+        var absence = new Absence(UUID.randomUUID(), LocalDate.of(2023, 5, 5));
+        Entitlement entitlement = init(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), 31);
+
+        entitlement.addAbsence(absence);
+
+        assertEquals(30, entitlement.remainingAmount());
     }
+
+    Entitlement init(LocalDate from, LocalDate to) {
+        return init(from, to, 26);
+    }
+
+    Entitlement init(LocalDate from, LocalDate to, Integer days) {
+        return new Entitlement(UUID.randomUUID(), from, to, days);
+    }
+
 
 }
