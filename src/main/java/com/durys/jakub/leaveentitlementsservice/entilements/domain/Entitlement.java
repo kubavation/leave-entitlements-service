@@ -14,20 +14,20 @@ class Entitlement {
 
     private final EntitlementId id;
     private final Period period;
-    private final Amount amountEntitled;
+    private final Amount entitled;
     private final List<Absence> absences;
 
     Entitlement(EntitlementId id, Period period, Amount amountEntitled) {
         this.id = id;
         this.period = period;
-        this.amountEntitled = amountEntitled;
+        this.entitled = amountEntitled;
         this.absences = new ArrayList<>();
     }
 
     Entitlement(UUID id, LocalDate from, LocalDate to, Integer days) {
         this.id = new EntitlementId(id);
         this.period = new Period(from, to);
-        this.amountEntitled = new Amount(days);
+        this.entitled = new Amount(days);
         this.absences = new ArrayList<>();
     }
 
@@ -42,11 +42,11 @@ class Entitlement {
 
     void withdrawAbsence(AbsenceId absenceId) {
         absences
-                .removeIf(absence -> absence.id().equals(absenceId));
+            .removeIf(absence -> absence.id().equals(absenceId));
     }
 
     Integer remainingAmount() {
-        return amountEntitled.days() - amountUsed();
+        return entitled.days() - amountUsed();
     }
 
 
