@@ -21,7 +21,7 @@ class WorkingTimeScheduleTest {
     }
 
     @Test
-    void shouldCreateWorkingTimeSchedule_whenDatesAreEmpty() {
+    void shouldNotCreateWorkingTimeSchedule_whenDatesAreEmpty() {
         DomainValidationException exception = assertThrows(DomainValidationException.class,
                 () -> new WorkingTimeSchedule(null, LocalDate.of(2023, 1, 1),
                         generate(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 1))));
@@ -30,12 +30,20 @@ class WorkingTimeScheduleTest {
     }
 
     @Test
-    void shouldCreateWorkingTimeSchedule_whenPeriodIsInvalid() {
+    void shouldNotCreateWorkingTimeSchedule_whenPeriodIsInvalid() {
         DomainValidationException exception = assertThrows(DomainValidationException.class,
                 () -> new WorkingTimeSchedule(LocalDate.of(2023, 1,2), LocalDate.of(2023, 1, 1),
                         generate(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 1))));
 
         assertEquals("Invalid period", exception.getMessage());
+    }
+
+    @Test
+    void shouldNotCreateWorkingTimeSchedule_whenDaysAreNotDefined() {
+        DomainValidationException exception = assertThrows(DomainValidationException.class,
+                () -> new WorkingTimeSchedule(LocalDate.of(2023, 1,1), LocalDate.of(2023, 1, 1), null));
+
+        assertEquals("Invalid days definition", exception.getMessage());
     }
 
 

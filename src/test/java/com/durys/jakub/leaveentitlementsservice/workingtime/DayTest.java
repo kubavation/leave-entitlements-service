@@ -21,7 +21,7 @@ class DayTest {
                 = assertThrows(DomainValidationException.class, () -> new Day(null, BigDecimal.valueOf(8)));
         assertEquals("Date cannot be empty", exception.getMessage());
     }
-    
+
 
     @Test
     void shouldNotCreateDay_whenHoursAreLessThanZero() {

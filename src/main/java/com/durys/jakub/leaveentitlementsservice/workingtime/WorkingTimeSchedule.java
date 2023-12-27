@@ -1,6 +1,7 @@
 package com.durys.jakub.leaveentitlementsservice.workingtime;
 
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -21,6 +22,10 @@ public record WorkingTimeSchedule(LocalDate from, LocalDate to, Set<Day> days) {
 
         if (from.isAfter(to)) {
             throw new DomainValidationException("Invalid period");
+        }
+
+        if (CollectionUtils.isEmpty(days)) {
+            throw new DomainValidationException("Invalid days definition");
         }
 
     }
