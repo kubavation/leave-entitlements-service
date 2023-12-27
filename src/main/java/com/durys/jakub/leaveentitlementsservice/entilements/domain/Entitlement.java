@@ -66,4 +66,9 @@ class Entitlement {
         return period.to();
     }
 
+
+    boolean applicable(LocalDate at) {
+        return !at.isBefore(from()) && !at.isAfter(to());
+    }
+
 }
