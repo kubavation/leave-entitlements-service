@@ -48,7 +48,10 @@ public record WorkingTimeSchedule(LocalDate from, LocalDate to, Set<Day> days) {
     }
 
     public Long numberOfWorkingDaysInRange(LocalDate from, LocalDate to) {
-        return (long) loadInRange(from, to).size();
+        return loadInRange(from, to)
+                .stream()
+                .filter(day -> Objects.nonNull(day.hours()))
+                .count();
     }
 
 }

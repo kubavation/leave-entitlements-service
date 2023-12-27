@@ -71,6 +71,33 @@ class WorkingTimeScheduleTest {
         assertEquals(2, schedule.numberOfWorkingDays());
     }
 
+    @Test
+    void shouldLoadDaysInRange() {
+
+        var from = LocalDate.of(2023, 1, 1);
+        var to = LocalDate.of(2023, 1, 4);
+        var days = generate(from, to);
+
+        var schedule = new WorkingTimeSchedule(from, to, days);
+
+        assertEquals(3, schedule
+                .loadInRange(LocalDate.of(2023, 1, 2), LocalDate.of(2023, 1, 10)).size());
+    }
+
+
+    @Test
+    void shouldReturnCorrectNumberOfWorkingDaysInRange() {
+
+        var from = LocalDate.of(2023, 1, 1);
+        var to = LocalDate.of(2023, 1, 4);
+        var days = generate(from, to, Set.of(LocalDate.of(2023, 1, 2)));
+
+        var schedule = new WorkingTimeSchedule(from, to, days);
+
+        assertEquals(2, schedule
+                .numberOfWorkingDaysInRange(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 3)));
+    }
+
 
 
     private static Set<Day> generate(LocalDate from, LocalDate to) {
