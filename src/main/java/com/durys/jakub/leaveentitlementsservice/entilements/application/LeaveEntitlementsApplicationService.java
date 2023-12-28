@@ -7,6 +7,7 @@ import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlem
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.command.AppendAbsenceCommand;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.command.GrantLeaveEntitlementsCommand;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.command.InitializedLeaveEntitlementsCommand;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.command.WithdrawAbsenceCommand;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeScheduleRepository;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,15 @@ class LeaveEntitlementsApplicationService {
         LeaveEntitlements entitlements = leaveEntitlementsRepository.load(new LeaveEntitlements.Id(command.absence(), command.tenantId()));
 
         entitlements.appendAbsence(schedule, absenceConfiguration);
+
+        leaveEntitlementsRepository.save(entitlements);
+    }
+
+    public void handle(WithdrawAbsenceCommand command) {
+
+        LeaveEntitlements entitlements = leaveEntitlementsRepository.load(new LeaveEntitlements.Id(command.absence(), command.tenantId()));
+
+        entitlements.withdrawAbsence(command.absenceId());
 
         leaveEntitlementsRepository.save(entitlements);
     }
