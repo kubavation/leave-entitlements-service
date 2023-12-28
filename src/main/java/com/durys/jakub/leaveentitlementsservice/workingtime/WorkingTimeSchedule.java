@@ -3,6 +3,7 @@ package com.durys.jakub.leaveentitlementsservice.workingtime;
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -39,6 +40,21 @@ public record WorkingTimeSchedule(LocalDate from, LocalDate to, Set<Day> days) {
         return days.stream()
                 .filter(day -> Objects.nonNull(day.hours()))
                 .count();
+    }
+
+    public BigDecimal hours() {
+        return days.stream()
+                .filter(day -> Objects.nonNull(day.hours()))
+                .map(Day::hours)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal hoursInRange(LocalDate from, LocalDate to) {
+        return  loadInRange(from, to)
+                .stream()
+                .filter(day -> Objects.nonNull(day.hours()))
+                .map(Day::hours)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public Set<Day> loadInRange(LocalDate from, LocalDate to) {
