@@ -47,7 +47,7 @@ class LeaveEntitlementsApplicationService {
     public void handle(AppendAbsenceCommand command) {
 
         WorkingTimeSchedule schedule = workingTimeScheduleRepository.load(command.tenantId(), command.from(), command.to());
-        AbsenceConfiguration absenceConfiguration = absenceRepository.find(command.tenantId(), command.absence());
+        AbsenceConfiguration absenceConfiguration = absenceRepository.load(command.tenantId(), command.absence());
 
         LeaveEntitlements entitlements = leaveEntitlementsRepository.load(new LeaveEntitlements.Id(command.absence(), command.tenantId()));
 
