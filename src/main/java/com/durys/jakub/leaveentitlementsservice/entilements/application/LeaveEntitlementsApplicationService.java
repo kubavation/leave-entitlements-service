@@ -2,6 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.entilements.application;
 
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlements;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlementsRepository;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.command.GrantLeaveEntitlementsCommand;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.command.InitializedLeaveEntitlementsCommand;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,15 @@ class LeaveEntitlementsApplicationService {
     public void handle(InitializedLeaveEntitlementsCommand command) {
 
         LeaveEntitlements entitlements = new LeaveEntitlements(new LeaveEntitlements.Id(command.absence(), command.tenantId()));
+
+        leaveEntitlementsRepository.save(entitlements);
+    }
+
+    public void handle(GrantLeaveEntitlementsCommand command) {
+
+        LeaveEntitlements entitlements = leaveEntitlementsRepository.load(new LeaveEntitlements.Id(command.absence(), command.tenantId()));
+
+        entitlements.grantEntitlements(command.from(), command.to(), command.amount());
 
         leaveEntitlementsRepository.save(entitlements);
     }
