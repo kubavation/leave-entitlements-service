@@ -1,8 +1,7 @@
-package com.durys.jakub.leaveentitlementsservice.employee;
+package com.durys.jakub.leaveentitlementsservice.employee.domain;
 
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
