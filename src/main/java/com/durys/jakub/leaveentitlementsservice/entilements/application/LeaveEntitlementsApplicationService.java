@@ -13,7 +13,7 @@ import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeScheduleR
 import org.springframework.stereotype.Component;
 
 @Component
-class LeaveEntitlementsApplicationService {
+public class LeaveEntitlementsApplicationService {
 
     private final LeaveEntitlementsRepository leaveEntitlementsRepository;
     private final AbsenceRepository absenceRepository;
