@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.ddd;
 
+import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
 import lombok.Getter;
 
@@ -39,7 +40,7 @@ public abstract class AggregateRoot<T extends DomainEvent> {
     protected void validate(T event) {
 
         if (Objects.isNull(event)) {
-            throw new RuntimeException("Invalid event");
+            throw new DomainValidationException("Invalid event");
         }
     }
 
