@@ -4,6 +4,7 @@ import com.durys.jakub.leaveentitlementsservice.absence.domain.AbsenceConfigurat
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
+import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -3,7 +3,7 @@ package com.durys.jakub.leaveentitlementsservice.entilements.infrastructure;
 import com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlements;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlementsRepository;
-import com.durys.jakub.leaveentitlementsservice.entilements.domain.TenantId;
+import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
 

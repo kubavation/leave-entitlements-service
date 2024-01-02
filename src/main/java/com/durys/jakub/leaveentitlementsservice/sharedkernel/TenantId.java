@@ -1,4 +1,4 @@
-package com.durys.jakub.leaveentitlementsservice.entilements.domain;
+package com.durys.jakub.leaveentitlementsservice.sharedkernel;
 
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 
