@@ -4,8 +4,9 @@ import com.durys.jakub.leaveentitlementsservice.employee.application.event.UserE
 import com.durys.jakub.leaveentitlementsservice.employee.domain.Employment;
 import com.durys.jakub.leaveentitlementsservice.employee.domain.EmploymentFactory;
 import com.durys.jakub.leaveentitlementsservice.employee.domain.EmploymentRepository;
+import com.durys.jakub.leaveentitlementsservice.event.EventHandler;
 
-class UserEmployedEventHandler {
+class UserEmployedEventHandler implements EventHandler<UserEmployed> {
 
     private final EmploymentRepository employmentRepository;
 
@@ -14,7 +15,7 @@ class UserEmployedEventHandler {
     }
 
 
-    void handle(UserEmployed event) {
+    public void handle(UserEmployed event) {
 
         Employment employment = EmploymentFactory.create(event.tenantId(), event.post(), event.employmentDate());
 
