@@ -1,9 +1,13 @@
 package com.durys.jakub.leaveentitlementsservice.employee.domain;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmploymentFactory {
 
 
