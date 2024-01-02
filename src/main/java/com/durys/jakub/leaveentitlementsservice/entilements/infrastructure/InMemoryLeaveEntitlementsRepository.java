@@ -3,14 +3,13 @@ package com.durys.jakub.leaveentitlementsservice.entilements.infrastructure;
 import com.durys.jakub.leaveentitlementsservice.common.serialization.Serializer;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlements;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlementsRepository;
+import com.durys.jakub.leaveentitlementsservice.entilements.domain.TenantId;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.es.Event;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class InMemoryLeaveEntitlementsRepository implements LeaveEntitlementsRepository {
 
@@ -32,6 +31,20 @@ public class InMemoryLeaveEntitlementsRepository implements LeaveEntitlementsRep
                 .toList();
 
         return LeaveEntitlements.recreate(domainEvents);
+    }
+
+    @Override
+    public Set<LeaveEntitlements> loadAll(TenantId tenantId) {
+
+        Set<LeaveEntitlements.Id> identifiers = DB.keySet()
+                .stream()
+                .filter(id -> id.tenantId().equals(tenantId))
+                .collect(Collectors.toSet());
+
+        return identifiers.stream()
+                .map(this::load)
+                .collect(Collectors.toSet());
+
     }
 
     @Override
