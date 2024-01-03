@@ -13,7 +13,7 @@ import java.util.UUID;
 class Entitlement {
 
     private final EntitlementId id;
-    private final Period period;
+    private Period period;
     private final Amount entitled;
     private final List<Absence> absences;
 
@@ -71,4 +71,8 @@ class Entitlement {
         return !at.isBefore(from()) && !at.isAfter(to());
     }
 
+    Entitlement terminate(LocalDate at) {
+        period = new Period(period.from(), at);
+        return null;
+    }
 }

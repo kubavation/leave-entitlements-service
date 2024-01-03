@@ -112,6 +112,8 @@ class Details {
     }
 
     void terminate(LocalDate at) {
-
+        findEntitlement(at)
+                .ifPresent(entitlement -> entitlement.terminate(at));
+        //todo archive
     }
 }
