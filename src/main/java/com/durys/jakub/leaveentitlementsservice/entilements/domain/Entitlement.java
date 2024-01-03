@@ -79,9 +79,8 @@ class Entitlement {
         return !at.isBefore(from()) && !at.isAfter(to());
     }
 
-    Entitlement terminate(LocalDate at) {
+    void terminate(LocalDate at) {
         period = new Period(period.from(), at);
-        return null;
     }
 
     void archive() {
