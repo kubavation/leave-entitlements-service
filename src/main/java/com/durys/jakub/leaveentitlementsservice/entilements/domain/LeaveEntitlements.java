@@ -23,6 +23,7 @@ import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
+
     public record Id(AbsenceType absenceType, TenantId tenantId) {
 
         public Id(String absenceType, UUID tenantId) {
@@ -50,6 +51,7 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
             case LeaveEntitlementsInitialized initialized -> handle(initialized);
             case AbsenceAppended absenceAppended -> handle(absenceAppended);
             case AbsenceWithdrawed absenceWithdrawed -> handle(absenceWithdrawed);
+            case LeaveEntitlementsTerminated leaveEntitlementsTerminated -> handle(leaveEntitlementsTerminated);
             default -> log.warn("Not supported event");
         }
     }
@@ -84,6 +86,11 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
     }
 
 
+    public void terminate(LocalDate at) {
+        apply(new LeaveEntitlementsTerminated(identifier, at));
+    }
+
+
     private void handle(LeaveEntitlementsInitialized event) {
         this.identifier = event.identifier();
         this.state = State.Active;
@@ -104,6 +111,10 @@ public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
 
     private void handle(AbsenceWithdrawed event) {
         entitlements.withdrawAbsence(new AbsenceId(event.absenceId()));
+    }
+
+    private void handle(LeaveEntitlementsTerminated event) {
+        entitlements.terminate(event.at());
     }
 
 

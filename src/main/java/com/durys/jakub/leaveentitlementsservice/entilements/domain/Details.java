@@ -110,4 +110,8 @@ class Details {
                     }
                 });
     }
+
+    void terminate(LocalDate at) {
+
+    }
 }
