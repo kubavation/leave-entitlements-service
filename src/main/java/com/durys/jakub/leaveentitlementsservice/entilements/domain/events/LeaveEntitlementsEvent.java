@@ -40,4 +40,12 @@ public sealed interface LeaveEntitlementsEvent extends DomainEvent {
         }
     }
 
+    record LeaveEntitlementsTerminated(LeaveEntitlements.Id identifier, LocalDate at) implements LeaveEntitlementsEvent {
+
+        @Override
+        public Object aggregateId() {
+            return identifier;
+        }
+    }
+
 }
