@@ -2,7 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import com.durys.jakub.leaveentitlementsservice.absence.domain.AbsenceConfiguration;
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
-import com.durys.jakub.leaveentitlementsservice.ddd.EventSourced;
+import com.durys.jakub.leaveentitlementsservice.es.EventSourced;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
