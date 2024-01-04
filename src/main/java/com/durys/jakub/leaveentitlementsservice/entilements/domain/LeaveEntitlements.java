@@ -25,11 +25,9 @@ public class LeaveEntitlements extends EventSourced<LeaveEntitlementsEvent> {
 
 
     public record Id(AbsenceType absenceType, TenantId tenantId) {
-
         public Id(String absenceType, UUID tenantId) {
             this(new AbsenceType(absenceType), new TenantId(tenantId));
         }
-
     }
 
     public enum State {
