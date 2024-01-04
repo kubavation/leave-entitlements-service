@@ -4,6 +4,7 @@ import com.durys.jakub.leaveentitlementsservice.employee.application.event.UserD
 import com.durys.jakub.leaveentitlementsservice.employee.domain.Employment;
 import com.durys.jakub.leaveentitlementsservice.employee.domain.EmploymentRepository;
 import com.durys.jakub.leaveentitlementsservice.event.EventHandler;
+import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
 
 class UserDismissedEventHandler implements EventHandler<UserDismissed> {
 

@@ -1,4 +1,4 @@
-package com.durys.jakub.leaveentitlementsservice.ddd;
+package com.durys.jakub.leaveentitlementsservice.es;
 
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
 import com.durys.jakub.leaveentitlementsservice.cqrs.DomainEvent;
@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-public abstract class AggregateRoot<T extends DomainEvent> {
+public abstract class EventSourced<T extends DomainEvent> {
 
     protected Long version;
-    protected final List<T> events = new ArrayList<>();
+    protected final List<T> pendingEvents = new ArrayList<>();
 
-    protected AggregateRoot() {
+    protected EventSourced() {
         this.version = 0L;
     }
 
@@ -28,7 +28,7 @@ public abstract class AggregateRoot<T extends DomainEvent> {
 
     public void apply(T event) {
         raise(event);
-        events.add(event);
+        pendingEvents.add(event);
     }
 
     protected final void load(List<T> events) {

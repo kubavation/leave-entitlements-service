@@ -50,7 +50,7 @@ public class InMemoryLeaveEntitlementsRepository implements LeaveEntitlementsRep
     @Override
     public void save(LeaveEntitlements entitlements) {
 
-        List<Event> pendingEvents = entitlements.getEvents()
+        List<Event> pendingEvents = entitlements.getPendingEvents()
                 .stream()
                 .map(event -> new Event(event.aggregateId(), event.getClass(), Serializer.serialize(event)))
                 .toList();

@@ -5,7 +5,6 @@ import com.durys.jakub.leaveentitlementsservice.entilements.domain.LeaveEntitlem
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 import static com.durys.jakub.leaveentitlementsservice.entilements.infrastructure.InMemoryLeaveEntitlementsRepository.DB;
@@ -44,7 +43,7 @@ class InMemoryLeaveEntitlementsRepositoryTest {
         LeaveEntitlements leaveEntitlements = repository.load(new LeaveEntitlements.Id(absence, tenantId));
 
         assertNotNull(leaveEntitlements);
-        assertTrue(leaveEntitlements.getEvents().isEmpty());
+        assertTrue(leaveEntitlements.getPendingEvents().isEmpty());
     }
 
 

@@ -1,5 +1,7 @@
 package com.durys.jakub.leaveentitlementsservice.employee.domain;
 
+import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
+
 import java.time.LocalDate;
 
 public class Employment {

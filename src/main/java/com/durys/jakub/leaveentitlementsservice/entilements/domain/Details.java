@@ -51,6 +51,12 @@ class Details {
                 .findFirst();
     }
 
+    private Set<Entitlement> entitlementsAfter(LocalDate date) {
+        return entitlements.stream()
+                .filter(entitlement -> entitlement.from().isAfter(date))
+                .collect(Collectors.toSet());
+    }
+
     boolean entitlementsNotRegistered(LocalDate from, LocalDate to) {
         return Stream.iterate(from, date -> date.plusDays(1))
                 .limit(ChronoUnit.DAYS.between(from, to) + 1)
@@ -112,8 +118,11 @@ class Details {
     }
 
     void terminate(LocalDate at) {
+
         findEntitlement(at)
                 .ifPresent(entitlement -> entitlement.terminate(at));
-        //todo archive
+
+        entitlementsAfter(at)
+                .forEach(Entitlement::archive);
     }
 }

@@ -12,16 +12,23 @@ import java.util.UUID;
 @Getter(AccessLevel.PACKAGE)
 class Entitlement {
 
+    enum State {
+        Active, Archived
+    }
+
     private final EntitlementId id;
     private Period period;
     private final Amount entitled;
     private final List<Absence> absences;
+    private State state;
+
 
     Entitlement(EntitlementId id, Period period, Amount amountEntitled) {
         this.id = id;
         this.period = period;
         this.entitled = amountEntitled;
         this.absences = new ArrayList<>();
+        this.state = State.Active;
     }
 
     Entitlement(UUID id, LocalDate from, LocalDate to, Integer days) {
@@ -29,6 +36,7 @@ class Entitlement {
         this.period = new Period(from, to);
         this.entitled = new Amount(days);
         this.absences = new ArrayList<>();
+        this.state = State.Active;
     }
 
     void addAbsence(Absence absence) {
@@ -71,8 +79,11 @@ class Entitlement {
         return !at.isBefore(from()) && !at.isAfter(to());
     }
 
-    Entitlement terminate(LocalDate at) {
+    void terminate(LocalDate at) {
         period = new Period(period.from(), at);
-        return null;
+    }
+
+    void archive() {
+        state = State.Archived;
     }
 }

@@ -1,5 +1,6 @@
 package com.durys.jakub.leaveentitlementsservice.employee.domain;
 
+import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

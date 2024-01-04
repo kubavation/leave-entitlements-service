@@ -26,7 +26,7 @@ class LeaveEntitlementsTest {
 
         LeaveEntitlements entitlements = LeaveEntitlementsFactory.create(absence, tenantId);
 
-        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsInitialized));
+        assertTrue(entitlements.getPendingEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsInitialized));
         assertEquals(new LeaveEntitlements.Id(absence, tenantId), entitlements.id());
     }
 
@@ -37,7 +37,7 @@ class LeaveEntitlementsTest {
 
         entitlements.grantEntitlements(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), 26);
 
-        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsGranted));
+        assertTrue(entitlements.getPendingEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.LeaveEntitlementsGranted));
     }
 
 
@@ -66,7 +66,7 @@ class LeaveEntitlementsTest {
 
         entitlements.appendAbsence(schedule, absence);
 
-        assertTrue(entitlements.getEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.AbsenceAppended));
+        assertTrue(entitlements.getPendingEvents().stream().anyMatch(event -> event instanceof LeaveEntitlementsEvent.AbsenceAppended));
     }
 
 
