@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-public abstract class AggregateRoot<T extends DomainEvent> {
+public abstract class EventSourced<T extends DomainEvent> {
 
     protected Long version;
     protected final List<T> events = new ArrayList<>();
 
-    protected AggregateRoot() {
+    protected EventSourced() {
         this.version = 0L;
     }
 

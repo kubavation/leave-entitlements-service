@@ -2,7 +2,7 @@ package com.durys.jakub.leaveentitlementsservice.entilements.domain;
 
 import com.durys.jakub.leaveentitlementsservice.absence.domain.AbsenceConfiguration;
 import com.durys.jakub.leaveentitlementsservice.common.exception.DomainValidationException;
-import com.durys.jakub.leaveentitlementsservice.ddd.AggregateRoot;
+import com.durys.jakub.leaveentitlementsservice.ddd.EventSourced;
 import com.durys.jakub.leaveentitlementsservice.entilements.domain.events.LeaveEntitlementsEvent;
 import com.durys.jakub.leaveentitlementsservice.sharedkernel.TenantId;
 import com.durys.jakub.leaveentitlementsservice.workingtime.WorkingTimeSchedule;
@@ -21,7 +21,7 @@ import static com.durys.jakub.leaveentitlementsservice.entilements.domain.events
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LeaveEntitlements extends AggregateRoot<LeaveEntitlementsEvent> {
+public class LeaveEntitlements extends EventSourced<LeaveEntitlementsEvent> {
 
 
     public record Id(AbsenceType absenceType, TenantId tenantId) {
